@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="docs/the_block_repo.png" alt="The Block challenge hero image" width="960" />
+</p>
+
 # The Block
 
 ### A coding challenge from OPENLANE
