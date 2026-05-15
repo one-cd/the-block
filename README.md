@@ -1,146 +1,99 @@
-<p align="center">
-  <img src="docs/the_block_repo.png" alt="The Block challenge hero image" width="960" />
-</p>
+# The Block: Buyer Auction MVP
 
-# The Block
+## How to Run
 
-### A coding challenge from OPENLANE
-
----
-
-OPENLANE powers one of the world's largest digital marketplaces for used vehicles. Every day, thousands of vehicles move through our platform - inspected, listed, auctioned, and sold. Your job is to interpret what we do and bring a working prototype to life.
-
-We're hiring for a team that builds fast, thinks independently, and takes ownership. This challenge is part of that process.
-
-## The Challenge
-
-Build the **buyer side of a vehicle auction platform as a web or mobile application**. We've included a dataset of 200 vehicles in [`data/vehicles.json`](data/vehicles.json), each listed by a selling dealership.
-
-A buyer should be able to browse inventory, inspect vehicle details, and place bids. That's the core experience. How you structure the product and how far you take it is up to you.
-
-## Core Requirements
-
-- Browse and search the vehicle inventory
-- Vehicle detail views with specs, condition, damage notes, selling dealership, and photos
-- A bidding experience where a buyer can place bids on vehicles
-- A usable experience that works well on the platform you choose
-- Clear instructions in your README for how to run the project locally
-
-## Assumptions You Can Make
-
-- This is a prototype, not a production launch.
-- Target roughly **4-8 hours** of work. If you spend more, that's your call, but we do not expect a fully built marketplace.
-- Use any framework, language, or stack.
-- If you want stack examples that fit this challenge, React + Vite is a good web option, and SwiftUI for iOS or Compose for Android are reasonable native mobile examples. None of these are required.
-- You may use AI tools and coding assistants, and their use is encouraged. Be ready to explain how you used them, what decisions you made, and what parts of the implementation you would refine.
-- Authentication and user accounts are **not required**.
-- A frontend-only implementation is completely acceptable.
-- You do **not** need to build seller workflows, checkout, payments, or dealer admin tooling.
-- Auction timestamps in the dataset are synthetic scheduling data. If you want to show countdowns or "live" states, it's fine to normalize them relative to "now" in your prototype.
-- Make reasonable product decisions, document your assumptions, and optimize for clarity over surface area.
-
-## Minimum Bar
-
-At a minimum, we want to see:
-
-- Inventory browsing and search
-- A clear vehicle detail experience
-- A bid flow with updated visible state
-- A usable experience on desktop and mobile
-- A repo we can clone and run by following your README
-
-## Stretch Ideas
-
-These are optional. Only do them if the basics are solid.
-
-- We care more about judgment than about any specific extra feature.
-- If you go beyond the basics, focus on improvements that make the buyer experience clearer, more useful, or more trustworthy.
-- That could show up in product decisions, UX details, implementation quality, or any other thoughtful extension that fits the timebox.
-
-## What to Submit
-
-1. **Fork this repo** to your own GitHub account
-2. Complete the challenge work in your fork
-3. Include a **README** in your repo with setup instructions and notable decisions
-4. When you're finished, share the link to your repo with your contact at **OPENLANE**
-
-We've included a [submission template](SUBMISSION.md) if you want a starting point.
-
-We should be able to clone your repo and have it running locally by following your README.
-
-## Timeline
-
-You have **5 days** from when you receive this challenge to submit it.
-
-This is not a speed run. We care more about your decisions and tradeoffs than the total number of features.
-
-## What Happens Next
-
-After you submit, we'll schedule a **45-60 minute walkthrough** where you'll screen-share and walk us through what you built. More details are in [`WALKTHROUGH.md`](WALKTHROUGH.md).
-
-## How We Evaluate
-
-We're not checking boxes. Here's what we care about:
-
-| | What we're looking at |
-|---|---|
-| **Product thinking** | Did you make smart decisions about what to build and how it should work? Does the UX make sense? |
-| **Craft** | Does it look and feel intentional? The details matter - design, layout quality, polish. |
-| **Technical quality** | Is the code clean, well-structured, and easy to follow? |
-| **Judgment** | Did you scope the work well for the time budget and make sensible tradeoffs? |
-| **Workflow** | Can you walk us through how you built it and why? (assessed in the walkthrough) |
-
-## The Data
-
-The vehicle dataset is at [`data/vehicles.json`](data/vehicles.json). Each vehicle includes:
-
-- Lot number, VIN, make, model, year, and trim
-- Specs (engine, transmission, drivetrain, fuel type, odometer)
-- Condition (grade, report, damage notes, title status)
-- Auction details (starting bid, reserve price, buy now price, auction start time)
-- Current bid and bid count (some vehicles already have active bids)
-- Location (city and province)
-- Selling dealership
-- Placeholder image URLs
-
-Here's what a single vehicle looks like:
-
-```json
-{
-  "id": "3cc3b89e-68b0-479e-af39-bca6251ea0b4",
-  "vin": "TRD7L1KS0HNB5X3K3",
-  "year": 2023,
-  "make": "Ford",
-  "model": "Bronco",
-  "trim": "Big Bend",
-  "body_style": "SUV",
-  "exterior_color": "Burgundy",
-  "interior_color": "Beige",
-  "engine": "2.7L EcoBoost V6",
-  "transmission": "automatic",
-  "drivetrain": "4WD",
-  "odometer_km": 47731,
-  "fuel_type": "gasoline",
-  "condition_grade": 3.8,
-  "condition_report": "Average condition. Has some visible wear on high-touch surfaces. Engine and transmission perform within normal parameters.",
-  "damage_notes": [
-    "Scratch on liftgate",
-    "Minor rust on wheel wells",
-    "Paint peeling on roof rack"
-  ],
-  "title_status": "clean",
-  "province": "Ontario",
-  "city": "Toronto",
-  "auction_start": "2026-04-05T14:00:00",
-  "starting_bid": 14500,
-  "reserve_price": 25000,
-  "buy_now_price": null,
-  "images": ["https://placehold.co/800x600?text=2023+Ford+Bronco+Photo+1", "..."],
-  "selling_dealership": "King City Auto",
-  "lot": "A-0043",
-  "current_bid": 22800,
-  "bid_count": 16
-}
+```bash
+npm install
+npm run dev
 ```
 
-The data is synthetic but meant to feel realistic. Use it however you want.
+Vite will print a local URL, usually `http://localhost:5173`.
+
+To verify the app:
+
+```bash
+npm run build
+npm run test
+npm run test:e2e
+```
+
+If Playwright has not been used on the machine before:
+
+```bash
+npx playwright install chromium
+```
+
+## Time Spent
+
+Roughly 6-8 hours across 2-3 sessions. 
+
+I started by exploring the dataset and challenge requirements, then on paper, I planned out how I would implement the minimal slice, considering the guidance given in the original readme. 
+
+Then, I decided to do some research and figure out OPENLANE's buyer auction UI and found a video on the website. I played around with the URL and got to the Vimeo where I had video controls and took some screenshots. 
+
+Then as a test, I got some screenshots from the video that encapsulated the minimal slice I wanted to implement and sent these to Anthropic's new design product (claude.ai/design). I told it to create a high fidelity prototype, and it successfully created a polished copy of OpenLane's real UI. This is included in `/Claude Design.` I kept in mind that I'd have to delete much of the chrome in this, since the data we're given is minimal, and I only wanted to keep data-backed elements in the app.
+
+I then had another model scaffold a React/vite/typescript app. Then I had it use the design folder as the source of truth in recreating only the UI and wiring in the obvious navigation, for example clicking on vehicle detial opens the vehicle detail page.
+
+After this, I referred to the vehicles.json as the source of truth in creating any features and displaying any data. I also considered what I could realistically derive from the data and still fit OpenLane's production UI. I removed all the UI and chrome I couldn't reliably create using the data. I first iteratively built the core buyer flow as per the requirements. I created tests for these core flows. Then, I added watchlist, persistence, filters, responsive polish, and automated tests.
+
+## Assumptions and Scope
+
+This is a frontend-only prototype. `data/vehicles.json` is the source of truth, and buyer state is stored locally in `localStorage`.
+
+I intentionally included the buyer-side experience: browsing inventory, searching, filtering, inspecting vehicle details, placing bids, and saving vehicles to a watchlist.
+
+I intentionally skipped authentication, backend APIs, seller workflows, checkout, payments, dealer admin tooling, bid history, a more complex bidding system and cross-device persistence.
+
+Auction timestamps are normalized relative to the current time so countdowns stay useful despite the synthetic dataset.
+
+## Stack
+
+- **Frontend:** React, TypeScript, Vite
+- **Backend:** None
+- **Database:** Static JSON dataset plus browser `localStorage`
+- **Testing:** Vitest, React Testing Library, Playwright
+
+## What I Built
+
+I built a responsive buyer-side auction prototype for OPENLANE inventory.
+
+Buyers can browse all 200 vehicles, search by identifying and vehicle fields, refine inventory with filters, switch between grid/list views, open vehicle detail pages, inspect condition and seller information, view vehicle photos, place validated bids, and return later with bids/watchlist state preserved locally.
+
+## Notable Decisions
+
+I kept the app frontend-only because the core product judgment is in the buyer flow, and I wanted to avoid scope creep by introducing a backend.
+
+I adapted the raw dataset into typed view models instead of letting UI components read raw JSON. That kept the formatting, search text, auction time normalization, and bid merging all in one place.
+
+I used `localStorage` for placed bids and watchlist state so bid feedback survives reloads without adding backend complexity.
+
+I added filters beyond the minimum requirement because inventory refinement is central to a buyer auction workflow and greatly improves the UX.
+
+I used Claude Deign to create a high fidelity prototype of OpenLane's actual UI.
+
+I preserved the `Claude Design/` reference as source material but rebuilt the production app under `src/` with typed React components and tests.
+
+I made sure not to make any derivations like price ranges for certain makes/models or create arbitrary scores from the data since it's only a sample size of 200.
+
+## Testing
+
+I added unit and component coverage for data adaptation, search, formatting, auction time handling, bid validation, inventory filtering, app navigation, and local persistence.
+
+I also added Playwright E2E tests covering the main buyer journey: search inventory, open a detail page, place a bid, reload and see persisted state, mobile usability, watchlist persistence, the all-filters drawer, and image gallery behavior.
+
+Current verification:
+
+```bash
+npm run test
+npm run build
+npm run test:e2e
+```
+
+All pass locally, on my machine.
+
+## What I'd Do With More Time
+
+I would add URL routing for shareable vehicle detail pages, a backend-backed bid service, user profiles, authenticated buyer sessions, bid history, saved searches, and more realistic image assets.
+
+I would also separate prototype-only UI polish from production auction logic, add analytics around buyer actions, and make the filtering tests less dependent on exact generated dataset counts.

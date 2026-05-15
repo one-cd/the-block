@@ -8,10 +8,11 @@ export const vehiclesRaw = rawVehicles as VehicleRaw[];
 export function createVehicleViewModels(
   session: BrowserSession,
   now: Date,
+  timelineBase = now,
 ): VehicleViewModel[] {
   const auctionDates = normalizeAuctionDates(
     vehiclesRaw.map((vehicle) => vehicle.auction_start),
-    now,
+    timelineBase,
   );
 
   return vehiclesRaw.map((vehicle) => {

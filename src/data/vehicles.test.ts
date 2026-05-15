@@ -51,7 +51,25 @@ describe("vehicle data adapter", () => {
     expect(vehicle.bidCount).toBe(raw.bid_count + 1);
     expect(vehicle.statusLabel).toBe("Active bidding");
   });
+
+  it("keeps the normalized auction schedule stable while countdowns tick", () => {
+    const session = { placedBids: {}, watchlist: {} };
+    const timelineBase = new Date("2026-05-14T20:15:00-04:00");
+    const laterNow = new Date("2026-05-14T21:05:00-04:00");
+
+    const initialVehicle = earliestByAuctionDate(createVehicleViewModels(session, timelineBase, timelineBase));
+    const laterVehicle = createVehicleViewModels(session, laterNow, timelineBase).find((vehicle) => vehicle.id === initialVehicle.id);
+
+    expect(laterVehicle?.auctionDate.getTime()).toBe(initialVehicle.auctionDate.getTime());
+    expect(laterVehicle?.countdown).toBe("00:55:00");
+  });
 });
+
+function earliestByAuctionDate(vehicles: ReturnType<typeof createVehicleViewModels>) {
+  return vehicles.reduce((earliest, vehicle) => (
+    vehicle.auctionDate.getTime() < earliest.auctionDate.getTime() ? vehicle : earliest
+  ));
+}
 
 describe("vehicle search", () => {
   it("searches across identifying, dealership, location, mechanical, title, and condition fields", () => {

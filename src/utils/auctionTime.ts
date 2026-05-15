@@ -1,15 +1,15 @@
 const HOUR = 60 * 60 * 1000;
 const DAY = 24 * HOUR;
 
-export function normalizeAuctionDates(rawDates: string[], now: Date): Map<string, Date> {
+export function normalizeAuctionDates(rawDates: string[], referenceNow: Date): Map<string, Date> {
   const parsed = rawDates.map((date) => new Date(date).getTime()).filter(Number.isFinite);
-  const min = Math.min(...parsed);
+  const min = parsed.length > 0 ? Math.min(...parsed) : referenceNow.getTime();
   const maxWindow = 7 * DAY;
-  const anchor = startOfNextHour(now).getTime() + HOUR;
+  const anchor = startOfNextHour(referenceNow).getTime() + HOUR;
 
   return rawDates.reduce((map, rawDate) => {
     const sourceTime = new Date(rawDate).getTime();
-    const offset = Number.isFinite(sourceTime) ? Math.abs(sourceTime - min) % maxWindow : 0;
+    const offset = Number.isFinite(sourceTime) ? Math.max(0, sourceTime - min) % maxWindow : 0;
     map.set(rawDate, new Date(anchor + offset));
     return map;
   }, new Map<string, Date>());

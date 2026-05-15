@@ -16,12 +16,13 @@ type Route =
 
 export default function App() {
   const now = useNow();
+  const [timelineBase] = useState(() => new Date());
   const { session, placeBid, hasBid, toggleWatchlist, isWatchlisted } = useBrowserSession();
   const [route, setRoute] = useState<Route>({ name: "inventory" });
   const [activeBidVehicle, setActiveBidVehicle] = useState<VehicleViewModel | null>(null);
   const [showConfetti, setShowConfetti] = useState(false);
   const [toastAmount, setToastAmount] = useState<string | null>(null);
-  const vehicles = useMemo(() => createVehicleViewModels(session, now), [session, now]);
+  const vehicles = useMemo(() => createVehicleViewModels(session, now, timelineBase), [session, now, timelineBase]);
   const activeVehicle = route.name === "detail" ? vehicles.find((vehicle) => vehicle.id === route.vehicleId) ?? null : null;
 
   const openDetail = useCallback((vehicle: VehicleViewModel) => {
