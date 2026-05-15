@@ -81,6 +81,7 @@ export function createVehicleViewModels(
       currentBid,
       topBid,
       bidCount,
+      userBid: bid?.latestBid ?? null,
       isAbsolute: vehicle.reserve_price == null,
       statusLabel,
       images: vehicle.images,

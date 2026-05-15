@@ -81,6 +81,7 @@ export type VehicleViewModel = {
   currentBid: number | null;
   topBid: number;
   bidCount: number;
+  userBid: number | null;
   isAbsolute: boolean;
   statusLabel: string;
   images: string[];

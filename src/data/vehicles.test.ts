@@ -48,7 +48,13 @@ describe("vehicle data adapter", () => {
     expect(vehicle.currentBid).toBe(localBid.currentBid);
     expect(vehicle.topBid).toBe(localBid.currentBid);
     expect(vehicle.bidCount).toBe(localBid.bidCount);
+    expect(vehicle.userBid).toBe(localBid.latestBid);
     expect(vehicle.statusLabel).toBe("Active bidding");
+  });
+
+  it("leaves userBid null when the buyer has not placed a bid", () => {
+    const vehicles = createVehicleViewModels({}, fixedNow);
+    expect(vehicles[0].userBid).toBeNull();
   });
 });
 

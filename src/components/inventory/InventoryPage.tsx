@@ -20,9 +20,15 @@ export function InventoryPage({ vehicles, onOpenVehicle }: InventoryPageProps) {
   const [, startTransition] = useTransition();
 
   const filteredVehicles = useMemo(() => {
-    const searched = filterVehicles(vehicles, searchTerm);
-    return absolute ? searched.filter((vehicle) => vehicle.isAbsolute) : searched;
-  }, [vehicles, searchTerm, absolute]);
+    let result = filterVehicles(vehicles, searchTerm);
+    if (absolute) {
+      result = result.filter((vehicle) => vehicle.isAbsolute);
+    }
+    if (tab === "bids") {
+      result = result.filter((vehicle) => vehicle.userBid != null);
+    }
+    return result;
+  }, [vehicles, searchTerm, absolute, tab]);
 
   const handleSearchChange = (value: string) => {
     startTransition(() => setSearchTerm(value));
@@ -40,7 +46,7 @@ export function InventoryPage({ vehicles, onOpenVehicle }: InventoryPageProps) {
       />
       <ResultsBar count={filteredVehicles.length} view={view} onViewChange={setView} />
       {filteredVehicles.length === 0 ? (
-        <div className="empty-results">{emptyMessage(searchTerm)}</div>
+        <div className="empty-results">{emptyMessage(searchTerm, tab)}</div>
       ) : (
         <div className={`grid${view === "list" ? " is-list" : ""}`}>
           {filteredVehicles.map((vehicle) => (
@@ -52,7 +58,11 @@ export function InventoryPage({ vehicles, onOpenVehicle }: InventoryPageProps) {
   );
 }
 
-function emptyMessage(searchTerm: string): string {
+function emptyMessage(searchTerm: string, tab: string): string {
+  if (tab === "bids") {
+    return "You haven't placed any bids yet. Open a vehicle and place a bid to see it here.";
+  }
+
   if (searchTerm.trim()) {
     return `No vehicles match "${searchTerm}". Try a make, model, VIN, lot, dealer, city, or title status.`;
   }
