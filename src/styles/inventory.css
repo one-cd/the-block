@@ -1,6 +1,9 @@
-.filterbar {
+.filterbar-wrap {
   background: var(--ol-white);
   border-bottom: 1px solid var(--ol-border);
+}
+
+.filterbar {
   display: flex;
   align-items: center;
   padding: 14px 32px;
@@ -50,8 +53,50 @@
   white-space: nowrap;
 }
 
+.select-pill {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  height: 38px;
+  min-width: max-content;
+  border: 1px solid var(--ol-border);
+  border-radius: var(--ol-radius);
+  background: var(--ol-white);
+  color: var(--ol-text);
+}
+
+.select-pill:hover,
+.select-pill:focus-within {
+  border-color: var(--ol-border-2);
+}
+
+.select-pill select {
+  appearance: none;
+  border: none;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  min-height: 36px;
+  padding: 0 34px 0 14px;
+  outline: none;
+}
+
+.select-pill svg {
+  position: absolute;
+  right: 12px;
+  pointer-events: none;
+}
+
 .pill-select:hover {
   border-color: var(--ol-border-2);
+}
+
+.pill-select.is-active {
+  border-color: var(--ol-blue);
+  color: var(--ol-blue);
+  background: var(--ol-blue-light);
 }
 
 .pill-select.filter-with-icon {
@@ -66,6 +111,24 @@
   font-size: 14px;
   color: var(--ol-text);
   white-space: nowrap;
+}
+
+.clear-filters {
+  height: 38px;
+  border: none;
+  background: transparent;
+  color: var(--ol-blue);
+  font-size: 14px;
+  font-weight: 600;
+  padding: 0 8px;
+}
+
+.advanced-filters {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 32px 14px;
+  overflow-x: auto;
 }
 
 .toggle {
@@ -139,7 +202,7 @@
 
 .sort-select {
   height: 38px;
-  padding: 0 12px 0 28px;
+  padding: 0 36px 0 28px;
   border: 1px solid var(--ol-border);
   border-radius: var(--ol-radius);
   background: var(--ol-white);
@@ -158,6 +221,27 @@
   left: 10px;
   color: var(--ol-text-3);
   font-size: 14px;
+}
+
+.sort-select span {
+  color: var(--ol-text-3);
+  font-weight: 500;
+}
+
+.sort-select select {
+  appearance: none;
+  border: none;
+  background: transparent;
+  color: var(--ol-text);
+  font: inherit;
+  font-weight: 600;
+  outline: none;
+}
+
+.sort-select svg {
+  position: absolute;
+  right: 12px;
+  pointer-events: none;
 }
 
 .grid {
@@ -242,6 +326,7 @@
 .vcard-image .placeholder-car,
 .detail-image-inner .placeholder-car,
 .thumb-inner .placeholder-car,
+.gallery-thumb-inner .placeholder-car,
 .modal-vehicle .pic .placeholder-car {
   position: absolute;
   inset: 0;
@@ -356,6 +441,34 @@
   color: var(--ol-text-4);
 }
 
+.vcard-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.auction-badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 22px;
+  border-radius: var(--ol-radius-pill);
+  background: var(--ol-bg-2);
+  color: var(--ol-text-2);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 2px 8px;
+}
+
+.auction-badge.buy-now {
+  background: var(--ol-blue-light);
+  color: var(--ol-blue);
+}
+
+.auction-badge.active {
+  background: #fff1f2;
+  color: var(--ol-red);
+}
+
 .vcard-meta {
   display: flex;
   align-items: center;
@@ -372,11 +485,6 @@
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.vcard-meta .status {
-  color: var(--ol-text-2);
   white-space: nowrap;
 }
 

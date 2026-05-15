@@ -30,6 +30,10 @@ export function VehicleCard({ vehicle, onClick }: VehicleCardProps) {
           <span className="sep">|</span>
           <span>{formatOdometerKm(vehicle.odometerKm)}</span>
         </div>
+        <div className="vcard-badges">
+          {vehicle.buyNowPrice != null ? <span className="auction-badge buy-now">Buy now</span> : null}
+          <span className={`auction-badge${vehicle.bidCount > 0 ? " active" : ""}`}>{vehicle.statusLabel}</span>
+        </div>
         <div className="vcard-stats">
           <div><Icon.Clock size={13} color="#6b7280" /> {vehicle.timeLeft}</div>
           <div><Icon.Doc size={13} color="#6b7280" /> {titleCase(vehicle.titleStatus)} title</div>
@@ -37,7 +41,6 @@ export function VehicleCard({ vehicle, onClick }: VehicleCardProps) {
         </div>
         <div className="vcard-meta">
           <span className="loc"><Icon.Pin size={13} color="#1a1a1a" /> {vehicle.location}</span>
-          <span className="status">{vehicle.statusLabel}</span>
         </div>
       </div>
       <div className="vcard-footer">

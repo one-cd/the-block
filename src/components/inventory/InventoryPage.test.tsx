@@ -9,8 +9,8 @@ const fixedNow = new Date("2026-05-14T20:00:00-04:00");
 describe("InventoryPage", () => {
   it("renders dataset vehicles and filters results from the search field", async () => {
     const user = userEvent.setup();
-    const vehicles = createVehicleViewModels({ placedBids: {} }, fixedNow);
-    const { container } = render(<InventoryPage vehicles={vehicles} onOpenVehicle={vi.fn()} hasBid={() => false} />);
+    const vehicles = createVehicleViewModels({ placedBids: {}, watchlist: {} }, fixedNow);
+    const { container } = render(<InventoryPage vehicles={vehicles} onOpenVehicle={vi.fn()} hasBid={() => false} isWatchlisted={() => false} />);
 
     expect(container.querySelectorAll(".vcard")).toHaveLength(vehiclesRaw.length);
 
@@ -24,14 +24,15 @@ describe("InventoryPage", () => {
 
   it("opens the selected vehicle when a card is clicked", async () => {
     const user = userEvent.setup();
-    const vehicles = createVehicleViewModels({ placedBids: {} }, fixedNow);
+    const vehicles = createVehicleViewModels({ placedBids: {}, watchlist: {} }, fixedNow);
     const onOpenVehicle = vi.fn();
-    const { container } = render(<InventoryPage vehicles={vehicles} onOpenVehicle={onOpenVehicle} hasBid={() => false} />);
+    const { container } = render(<InventoryPage vehicles={vehicles} onOpenVehicle={onOpenVehicle} hasBid={() => false} isWatchlisted={() => false} />);
     const firstCard = container.querySelector(".vcard");
 
     expect(firstCard).not.toBeNull();
     await user.click(firstCard as HTMLElement);
 
-    expect(onOpenVehicle).toHaveBeenCalledWith(vehicles[0]);
+    const lowestMileageVehicle = [...vehicles].sort((left, right) => left.odometerKm - right.odometerKm || right.year - left.year)[0];
+    expect(onOpenVehicle).toHaveBeenCalledWith(lowestMileageVehicle);
   });
 });

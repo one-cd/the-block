@@ -1,12 +1,15 @@
 import { Icon } from "../icons/Icon";
+import { SORT_OPTIONS, type SortKey } from "./inventoryControls";
 
 type ResultsBarProps = {
   count: number;
   view: "grid" | "list";
+  sort: SortKey;
   onViewChange: (view: "grid" | "list") => void;
+  onSortChange: (sort: SortKey) => void;
 };
 
-export function ResultsBar({ count, view, onViewChange }: ResultsBarProps) {
+export function ResultsBar({ count, view, sort, onViewChange, onSortChange }: ResultsBarProps) {
   return (
     <div className="results-bar">
       <div className="results-count">{count === 0 ? "0 results" : `1-${count} of ${count} results`}</div>
@@ -18,10 +21,15 @@ export function ResultsBar({ count, view, onViewChange }: ResultsBarProps) {
           <Icon.GridView size={18} />
         </button>
       </div>
-      <button className="sort-select" type="button">
-        Most recently listed
+      <label className="sort-select">
+        <span>Sort</span>
+        <select value={sort} onChange={(event) => onSortChange(event.target.value as SortKey)} aria-label="Sort results">
+          {SORT_OPTIONS.map((option) => (
+            <option key={option.value} value={option.value}>{option.label}</option>
+          ))}
+        </select>
         <Icon.Chevron size={14} color="#6b7280" />
-      </button>
+      </label>
     </div>
   );
 }
