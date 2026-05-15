@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import type { BidState, VehicleViewModel } from "../types/vehicle";
 
-const BID_STORAGE_KEY = "openlane-bid-state-v1";
+export const BID_STORAGE_KEY = "openlane-bid-state-v1";
 
 type BidStateMap = Record<string, BidState>;
 
