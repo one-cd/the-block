@@ -86,6 +86,13 @@
   background: linear-gradient(180deg, #b8d4ef 0%, #95b0cc 55%, #786958 100%);
   aspect-ratio: 16 / 10;
   overflow: hidden;
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
 }
 
 .detail-image-inner,

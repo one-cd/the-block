@@ -42,9 +42,14 @@ export function VehicleDetail({ vehicle, onBack, onBid, isWatchlisted, onToggleW
       />
       <div className="detail-wrap">
         <div>
-          <div className="detail-image">
+          <button
+            className="detail-image"
+            type="button"
+            onClick={() => setIsGalleryOpen(true)}
+            aria-label="Open image gallery"
+          >
             <VehicleImage vehicle={vehicle} className="detail-image-inner" imageIndex={selectedImage} />
-          </div>
+          </button>
           <div className="thumbs-strip">
             {vehicle.images.slice(0, 3).map((image, index) => (
               <button
@@ -52,12 +57,8 @@ export function VehicleDetail({ vehicle, onBack, onBid, isWatchlisted, onToggleW
                 className={`thumb${selectedImage === index ? " is-active" : ""}`}
                 type="button"
                 onClick={() => {
-                  if (index === 2 && vehicle.images.length > 3) {
-                    setSelectedImage(index);
-                    setIsGalleryOpen(true);
-                  } else {
-                    setSelectedImage(index);
-                  }
+                  setSelectedImage(index);
+                  setIsGalleryOpen(true);
                 }}
                 aria-label={index === 2 && vehicle.images.length > 3 ? "Open image gallery" : `Show image ${index + 1}`}
               >
