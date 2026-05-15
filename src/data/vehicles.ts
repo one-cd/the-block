@@ -101,13 +101,7 @@ export function filterVehicles(vehicles: VehicleViewModel[], searchTerm: string)
 }
 
 function createMarketSummary(vehicle: VehicleRaw): MarketSummary {
-  const comparable = vehiclesRaw.filter(
-    (candidate) =>
-      candidate.id !== vehicle.id &&
-      (candidate.make === vehicle.make ||
-        candidate.model === vehicle.model ||
-        candidate.body_style === vehicle.body_style),
-  );
+  const comparable = findComparableVehicles(vehicle);
   const pricePoints = comparable
     .flatMap((candidate) => [
       candidate.current_bid,
@@ -131,4 +125,35 @@ function createMarketSummary(vehicle: VehicleRaw): MarketSummary {
     high,
     similarCount: comparable.length,
   };
+}
+
+function findComparableVehicles(vehicle: VehicleRaw): VehicleRaw[] {
+  const sameModel = vehiclesRaw.filter(
+    (candidate) =>
+      candidate.id !== vehicle.id &&
+      candidate.make === vehicle.make &&
+      candidate.model === vehicle.model,
+  );
+  if (sameModel.length >= 3) {
+    return sameModel;
+  }
+
+  const sameMakeAndBody = vehiclesRaw.filter(
+    (candidate) =>
+      candidate.id !== vehicle.id &&
+      candidate.make === vehicle.make &&
+      candidate.body_style === vehicle.body_style &&
+      Math.abs(candidate.year - vehicle.year) <= 3,
+  );
+  if (sameMakeAndBody.length >= 3) {
+    return sameMakeAndBody;
+  }
+
+  const sameBody = vehiclesRaw.filter(
+    (candidate) =>
+      candidate.id !== vehicle.id &&
+      candidate.body_style === vehicle.body_style &&
+      Math.abs(candidate.year - vehicle.year) <= 3,
+  );
+  return sameBody.length > 0 ? sameBody : sameModel;
 }
