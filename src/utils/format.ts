@@ -3,9 +3,9 @@ export function formatCurrency(value: number | null | undefined): string {
     return "--";
   }
 
-  return new Intl.NumberFormat("en-US", {
+  return new Intl.NumberFormat("en-CA", {
     style: "currency",
-    currency: "USD",
+    currency: "CAD",
     maximumFractionDigits: 0,
   }).format(value);
 }
