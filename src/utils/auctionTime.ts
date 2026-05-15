@@ -26,11 +26,13 @@ export function formatAuctionDate(date: Date): string {
 
 export function formatCountdown(target: Date, now: Date): string {
   const remaining = Math.max(0, target.getTime() - now.getTime());
-  const hours = Math.floor(remaining / HOUR);
+  const days = Math.floor(remaining / DAY);
+  const hours = Math.floor((remaining % DAY) / HOUR);
   const minutes = Math.floor((remaining % HOUR) / (60 * 1000));
   const seconds = Math.floor((remaining % (60 * 1000)) / 1000);
+  const clock = [hours, minutes, seconds].map((value) => String(value).padStart(2, "0")).join(":");
 
-  return [hours, minutes, seconds].map((value) => String(value).padStart(2, "0")).join(":");
+  return days > 0 ? `${days}d ${clock}` : clock;
 }
 
 export function formatTimeLeft(target: Date, now: Date): string {

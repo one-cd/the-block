@@ -19,6 +19,7 @@ describe("auction time helpers", () => {
     const now = new Date("2026-05-14T20:00:00Z");
 
     expect(formatCountdown(new Date("2026-05-14T22:03:04Z"), now)).toBe("02:03:04");
+    expect(formatCountdown(new Date("2026-05-20T07:03:04Z"), now)).toBe("5d 11:03:04");
     expect(formatTimeLeft(new Date("2026-05-15T21:00:00Z"), now)).toBe("1 day");
     expect(formatTimeLeft(new Date("2026-05-14T20:15:00Z"), now)).toBe("Closing soon");
   });
