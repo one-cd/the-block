@@ -64,11 +64,11 @@
 
 @media (max-width: 640px) {
   .topnav-logo .topnav-wordmark {
-    display: none;
+    font-size: 15px;
   }
 
   .topnav-tabs {
-    margin-left: 0;
+    margin-left: auto;
     gap: 14px;
   }
 
