@@ -14,7 +14,6 @@ export function BidModal({ vehicle, onClose, onConfirm }: BidModalProps) {
   const minimumBid = vehicle.topBid + 100;
   const [bid, setBid] = useState(() => formatCurrencyInput(minimumBid));
   const [maxBid, setMaxBid] = useState("");
-  const [notes, setNotes] = useState("");
   const [asDesc, setAsDesc] = useState(vehicle.titleStatus === "clean");
   const [extGuar, setExtGuar] = useState(vehicle.conditionGrade >= 3);
   const [transport, setTransport] = useState(false);
@@ -91,16 +90,6 @@ export function BidModal({ vehicle, onClose, onConfirm }: BidModalProps) {
               onFocus={() => setFocus("maxbid")}
               onBlur={() => setFocus(null)}
               placeholder="Optional"
-            />
-          </div>
-
-          <div>
-            <label className="field-label" htmlFor="bid-notes">Notes</label>
-            <textarea
-              id="bid-notes"
-              className="notes-input"
-              value={notes}
-              onChange={(event) => setNotes(event.target.value)}
             />
           </div>
 

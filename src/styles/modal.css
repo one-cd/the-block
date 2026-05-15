@@ -169,23 +169,6 @@
   font-weight: 600;
 }
 
-.notes-input {
-  width: 100%;
-  border: 1px solid var(--ol-border-2);
-  border-radius: 6px;
-  padding: 12px 14px;
-  min-height: 60px;
-  resize: vertical;
-  font-family: inherit;
-  font-size: 14px;
-  outline: none;
-}
-
-.notes-input:focus {
-  border-color: var(--ol-blue);
-  box-shadow: 0 0 0 1px var(--ol-blue);
-}
-
 .services-panel {
   background: var(--ol-bg-2);
   border-radius: 8px;

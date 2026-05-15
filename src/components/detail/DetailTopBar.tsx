@@ -23,7 +23,6 @@ export function DetailTopBar({ endsIn, isWatchlisted, onBack, onToggleWatchlist 
           <Icon.Heart size={16} color="#1652F0" fill={isWatchlisted ? "#1652F0" : "none"} />
           {isWatchlisted ? "Watching" : "Watchlist"}
         </button>
-        <button className="btn-outline" type="button"><Icon.Note size={16} /> Notes</button>
       </div>
     </div>
   );
