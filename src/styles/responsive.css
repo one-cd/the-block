@@ -1,0 +1,186 @@
+@media (max-width: 1400px) {
+  .grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (max-width: 1100px) {
+  .grid,
+  .grid.is-list {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .detail-wrap {
+    grid-template-columns: minmax(0, 1fr) 420px;
+  }
+}
+
+@media (max-width: 900px) {
+  .topnav {
+    padding: 0 16px;
+    gap: 14px;
+  }
+
+  .topnav-tabs {
+    gap: 18px;
+  }
+
+  .dealer-pill {
+    display: none;
+  }
+
+  .filterbar,
+  .results-bar,
+  .subnav,
+  .detail-top {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .grid,
+  .grid.is-list {
+    grid-template-columns: repeat(2, 1fr);
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .detail-wrap {
+    display: block;
+  }
+
+  .detail-right {
+    border-left: none;
+    padding: 20px 16px 130px;
+  }
+
+  .detail-top {
+    flex-wrap: wrap;
+  }
+
+  .detail-top-right {
+    margin-left: 0;
+  }
+}
+
+@media (max-width: 640px) {
+  .topnav-logo .topnav-wordmark {
+    display: none;
+  }
+
+  .topnav-tabs {
+    margin-left: 0;
+    gap: 14px;
+  }
+
+  .topnav-tab {
+    font-size: 13px;
+  }
+
+  .subnav {
+    overflow-x: auto;
+  }
+
+  .filterbar {
+    align-items: stretch;
+  }
+
+  .search-input {
+    min-width: 180px;
+  }
+
+  .results-bar {
+    flex-wrap: wrap;
+  }
+
+  .results-count {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .grid,
+  .grid.is-list {
+    grid-template-columns: 1fr;
+  }
+
+  .detail-top .ends-in .label {
+    font-size: 14px;
+  }
+
+  .detail-top .ends-in .time {
+    font-size: 20px;
+  }
+
+  .image-slider {
+    width: 160px;
+  }
+
+  .visual-boost {
+    max-width: calc(100% - 32px);
+  }
+
+  .dr-title {
+    font-size: 22px;
+  }
+
+  .dr-row,
+  .vin-line {
+    flex-wrap: wrap;
+  }
+
+  .spec-chips,
+  .market-stats,
+  .dealer-actions,
+  .dealer-stats {
+    flex-direction: column;
+    display: flex;
+  }
+
+  .spec-chip {
+    border-right: none;
+    border-bottom: 1px solid var(--ol-border);
+  }
+
+  .spec-chip:last-child {
+    border-bottom: none;
+  }
+
+  .transport-card {
+    grid-template-columns: 1fr;
+  }
+
+  .bid-bar {
+    padding: 10px 12px;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .bid-bar .absolute-pill {
+    margin-left: 0;
+  }
+
+  .bid-bar .btn-bid {
+    flex: 1;
+    padding: 12px 24px;
+  }
+
+  .modal-backdrop {
+    padding: 8px;
+    align-items: flex-end;
+  }
+
+  .modal {
+    max-height: calc(100vh - 16px);
+  }
+
+  .service-row {
+    align-items: flex-start;
+  }
+
+  .service-row .name {
+    white-space: normal;
+  }
+
+  .modal-footer {
+    padding: 12px;
+  }
+}
