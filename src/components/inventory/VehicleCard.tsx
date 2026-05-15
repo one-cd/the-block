@@ -1,5 +1,5 @@
 import type { VehicleViewModel } from "../../types/vehicle";
-import { formatCurrency, formatOdometerKm, titleCase } from "../../utils/format";
+import { formatCurrency, formatOdometerKm, pluralize, titleCase } from "../../utils/format";
 import { Icon } from "../icons/Icon";
 import { VehicleImage } from "../media/VehicleImage";
 
@@ -33,7 +33,7 @@ export function VehicleCard({ vehicle, onClick }: VehicleCardProps) {
         <div className="vcard-stats">
           <div><Icon.Clock size={13} color="#6b7280" /> {vehicle.timeLeft}</div>
           <div><Icon.Doc size={13} color="#6b7280" /> {titleCase(vehicle.titleStatus)} title</div>
-          <div><Icon.Pie size={13} color="#6b7280" /> {vehicle.bidCount} bids</div>
+          <div><Icon.Pie size={13} color="#6b7280" /> {pluralize(vehicle.bidCount, "bid")}</div>
         </div>
         <div className="vcard-meta">
           <span className="loc"><Icon.Pin size={13} color="#1a1a1a" /> {vehicle.location}</span>

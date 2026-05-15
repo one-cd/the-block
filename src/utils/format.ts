@@ -18,6 +18,10 @@ export function formatOdometerKm(value: number): string {
   return `${formatNumber(value)} km`;
 }
 
+export function pluralize(count: number, singular: string, plural = `${singular}s`): string {
+  return `${formatNumber(count)} ${count === 1 ? singular : plural}`;
+}
+
 export function titleCase(value: string): string {
   return value
     .split(/[\s_-]+/)
