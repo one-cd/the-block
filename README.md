@@ -31,7 +31,7 @@ I started by exploring the dataset and challenge requirements, then on paper, I 
 
 Then, I decided to do some research and figure out OPENLANE's buyer auction UI and found a video on the website. I played around with the URL and got to the Vimeo where I had video controls and took some screenshots. 
 
-Then as a test, I got some screenshots from the video that encapsulated the minimal slice I wanted to implement and sent these to Anthropic's new design product (claude.ai/design). I told it to create a high fidelity prototype, and it successfully created a polished copy of OpenLane's real UI. This is included in `/Claude Design.` I kept in mind that I'd have to delete much of the chrome in this, since the data we're given is minimal, and I only wanted to keep data-backed elements in the app.
+Then as a test, I got some screenshots from the video that encapsulated the minimal slice I wanted to implement and sent these to Anthropic's new design product (claude.ai/design). I told it to create a high fidelity prototype, and it successfully created a polished copy of OpenLane's real UI. This is included in `Claude Design/` I kept in mind that I'd have to delete much of the chrome in this, since the data we're given is minimal, and I only wanted to keep data-backed elements in the app.
 
 I then had another model scaffold a React/vite/typescript app. Then I had it use the design folder as the source of truth in recreating only the UI and wiring in the obvious navigation, for example clicking on vehicle detial opens the vehicle detail page.
 
