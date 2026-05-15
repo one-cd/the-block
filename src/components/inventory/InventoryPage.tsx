@@ -39,16 +39,23 @@ export function InventoryPage({ vehicles, onOpenVehicle }: InventoryPageProps) {
         onAbsoluteChange={setAbsolute}
       />
       <ResultsBar count={filteredVehicles.length} view={view} onViewChange={setView} />
-      <div className={`grid${view === "list" ? " is-list" : ""}`}>
-        {filteredVehicles.map((vehicle) => (
-          <VehicleCard key={vehicle.id} vehicle={vehicle} onClick={onOpenVehicle} />
-        ))}
-      </div>
       {filteredVehicles.length === 0 ? (
-        <div className="empty-results">
-          No vehicles match "{searchTerm}". Try a make, model, VIN, lot, dealer, city, or title status.
+        <div className="empty-results">{emptyMessage(searchTerm)}</div>
+      ) : (
+        <div className={`grid${view === "list" ? " is-list" : ""}`}>
+          {filteredVehicles.map((vehicle) => (
+            <VehicleCard key={vehicle.id} vehicle={vehicle} onClick={onOpenVehicle} />
+          ))}
         </div>
-      ) : null}
+      )}
     </div>
   );
+}
+
+function emptyMessage(searchTerm: string): string {
+  if (searchTerm.trim()) {
+    return `No vehicles match "${searchTerm}". Try a make, model, VIN, lot, dealer, city, or title status.`;
+  }
+
+  return "No vehicles match your filters. Try clearing Absolute sale or other filters.";
 }
