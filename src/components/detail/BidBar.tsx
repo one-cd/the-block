@@ -21,7 +21,7 @@ export function BidBar({ vehicle, onBidClick }: BidBarProps) {
           </svg>
         </div>
         <span>
-          {vehicle.bidCount === 0 ? "Starting bid" : "Top bid"} <b>{formatCurrency(vehicle.topBid)}</b>
+          {vehicle.isTopBidder ? "Your bid" : vehicle.bidCount === 0 ? "Starting bid" : "Top bid"} <b>{formatCurrency(vehicle.topBid)}</b>
         </span>
       </div>
       <div className="bids-count">{pluralize(vehicle.bidCount, "bid")}</div>

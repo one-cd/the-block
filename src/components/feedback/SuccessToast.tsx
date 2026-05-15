@@ -10,7 +10,7 @@ export function SuccessToast({ amount }: SuccessToastProps) {
       <span className="ok-icon">
         <Icon.Check size={14} color="white" />
       </span>
-      Your bid for {amount} has been placed.
+      Your bid of {amount} is in.
     </div>
   );
 }

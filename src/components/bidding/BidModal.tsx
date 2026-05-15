@@ -16,7 +16,7 @@ export function BidModal({ vehicle, onClose, onConfirm }: BidModalProps) {
   const [isFocused, setIsFocused] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const amount = useMemo(() => parseCurrencyInput(bid), [bid]);
-  const error = amount == null || amount <= vehicle.topBid ? `Bid must be above ${formatCurrency(vehicle.topBid)}.` : null;
+  const error = amount == null || amount < minimumBid ? `Bid must be at least ${formatCurrency(minimumBid)}.` : null;
 
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {

@@ -77,6 +77,7 @@ export type VehicleViewModel = {
   buyNowPrice: number | null;
   currentBid: number | null;
   topBid: number;
+  isTopBidder: boolean;
   bidCount: number;
   statusLabel: string;
   images: string[];

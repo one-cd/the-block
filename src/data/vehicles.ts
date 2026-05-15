@@ -21,6 +21,7 @@ export function createVehicleViewModels(
       : vehicle.current_bid;
     const bidCount = vehicle.bid_count + (placedBid ? 1 : 0);
     const topBid = currentBid ?? vehicle.starting_bid;
+    const isTopBidder = placedBid != null && placedBid.amount === topBid;
     const auctionDate = auctionDates.get(vehicle.auction_start) ?? new Date(vehicle.auction_start);
     const title = [vehicle.year, vehicle.make, vehicle.model, vehicle.trim].filter(Boolean).join(" ");
     const shortTitle = [vehicle.year, vehicle.make, vehicle.model].filter(Boolean).join(" ");
@@ -81,6 +82,7 @@ export function createVehicleViewModels(
       buyNowPrice: vehicle.buy_now_price,
       currentBid,
       topBid,
+      isTopBidder,
       bidCount,
       statusLabel,
       images: vehicle.images,
