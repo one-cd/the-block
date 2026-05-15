@@ -9,8 +9,8 @@ const fixedNow = new Date("2026-05-14T20:00:00-04:00");
 describe("InventoryPage", () => {
   it("renders dataset vehicles and filters results from the search field", async () => {
     const user = userEvent.setup();
-    const vehicles = createVehicleViewModels({}, fixedNow);
-    const { container } = render(<InventoryPage vehicles={vehicles} onOpenVehicle={vi.fn()} />);
+    const vehicles = createVehicleViewModels({ placedBids: {} }, fixedNow);
+    const { container } = render(<InventoryPage vehicles={vehicles} onOpenVehicle={vi.fn()} hasBid={() => false} />);
 
     expect(container.querySelectorAll(".vcard")).toHaveLength(vehiclesRaw.length);
 
@@ -24,9 +24,9 @@ describe("InventoryPage", () => {
 
   it("opens the selected vehicle when a card is clicked", async () => {
     const user = userEvent.setup();
-    const vehicles = createVehicleViewModels({}, fixedNow);
+    const vehicles = createVehicleViewModels({ placedBids: {} }, fixedNow);
     const onOpenVehicle = vi.fn();
-    const { container } = render(<InventoryPage vehicles={vehicles} onOpenVehicle={onOpenVehicle} />);
+    const { container } = render(<InventoryPage vehicles={vehicles} onOpenVehicle={onOpenVehicle} hasBid={() => false} />);
     const firstCard = container.querySelector(".vcard");
 
     expect(firstCard).not.toBeNull();

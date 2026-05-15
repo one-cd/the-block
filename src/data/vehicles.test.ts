@@ -5,7 +5,7 @@ const fixedNow = new Date("2026-05-14T20:00:00-04:00");
 
 describe("vehicle data adapter", () => {
   it("creates OpenLane-shaped vehicle models from the raw dataset", () => {
-    const vehicles = createVehicleViewModels({}, fixedNow);
+    const vehicles = createVehicleViewModels({ placedBids: {} }, fixedNow);
     const raw = vehiclesRaw[0];
     const vehicle = vehicles[0];
 
@@ -35,32 +35,27 @@ describe("vehicle data adapter", () => {
     expect(vehicle.searchText).toContain(raw.vin.toLowerCase());
   });
 
-  it("applies local bid state over raw auction pricing", () => {
+  it("merges the buyer's placed bid into the displayed top bid and count", () => {
     const raw = vehiclesRaw[0];
-    const localBid = {
-      currentBid: raw.starting_bid + 7_500,
-      bidCount: raw.bid_count + 1,
-      latestBid: raw.starting_bid + 7_500,
+    const buyerAmount = (raw.current_bid ?? raw.starting_bid) + 7_500;
+    const session = {
+      placedBids: {
+        [raw.id]: { amount: buyerAmount, placedAt: "2026-05-14T20:00:00.000Z" },
+      },
     };
 
-    const vehicle = createVehicleViewModels({ [raw.id]: localBid }, fixedNow)[0];
+    const vehicle = createVehicleViewModels(session, fixedNow)[0];
 
-    expect(vehicle.currentBid).toBe(localBid.currentBid);
-    expect(vehicle.topBid).toBe(localBid.currentBid);
-    expect(vehicle.bidCount).toBe(localBid.bidCount);
-    expect(vehicle.userBid).toBe(localBid.latestBid);
+    expect(vehicle.currentBid).toBe(buyerAmount);
+    expect(vehicle.topBid).toBe(buyerAmount);
+    expect(vehicle.bidCount).toBe(raw.bid_count + 1);
     expect(vehicle.statusLabel).toBe("Active bidding");
-  });
-
-  it("leaves userBid null when the buyer has not placed a bid", () => {
-    const vehicles = createVehicleViewModels({}, fixedNow);
-    expect(vehicles[0].userBid).toBeNull();
   });
 });
 
 describe("vehicle search", () => {
   it("searches across identifying, dealership, location, mechanical, title, and condition fields", () => {
-    const vehicles = createVehicleViewModels({}, fixedNow);
+    const vehicles = createVehicleViewModels({ placedBids: {} }, fixedNow);
     const vehicleWithDamage = vehicles.find((vehicle) => vehicle.damageNotes.length > 0);
 
     expect(vehicleWithDamage).toBeDefined();
@@ -82,7 +77,7 @@ describe("vehicle search", () => {
   });
 
   it("returns every vehicle when the search is blank", () => {
-    const vehicles = createVehicleViewModels({}, fixedNow);
+    const vehicles = createVehicleViewModels({ placedBids: {} }, fixedNow);
 
     expect(filterVehicles(vehicles, "   ")).toHaveLength(vehiclesRaw.length);
   });

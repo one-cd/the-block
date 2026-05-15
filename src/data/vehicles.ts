@@ -1,12 +1,12 @@
 import rawVehicles from "../../data/vehicles.json";
-import type { BidState, MarketSummary, VehicleRaw, VehicleViewModel } from "../types/vehicle";
+import type { BrowserSession, MarketSummary, VehicleRaw, VehicleViewModel } from "../types/vehicle";
 import { formatAuctionDate, formatCountdown, formatTimeLeft, normalizeAuctionDates } from "../utils/auctionTime";
 import { titleCase } from "../utils/format";
 
 export const vehiclesRaw = rawVehicles as VehicleRaw[];
 
 export function createVehicleViewModels(
-  bids: Record<string, BidState>,
+  session: BrowserSession,
   now: Date,
 ): VehicleViewModel[] {
   const auctionDates = normalizeAuctionDates(
@@ -15,9 +15,11 @@ export function createVehicleViewModels(
   );
 
   return vehiclesRaw.map((vehicle) => {
-    const bid = bids[vehicle.id];
-    const currentBid = bid?.currentBid ?? vehicle.current_bid;
-    const bidCount = bid?.bidCount ?? vehicle.bid_count;
+    const placedBid = session.placedBids[vehicle.id];
+    const currentBid = placedBid != null
+      ? Math.max(placedBid.amount, vehicle.current_bid ?? 0)
+      : vehicle.current_bid;
+    const bidCount = vehicle.bid_count + (placedBid ? 1 : 0);
     const topBid = currentBid ?? vehicle.starting_bid;
     const auctionDate = auctionDates.get(vehicle.auction_start) ?? new Date(vehicle.auction_start);
     const market = createMarketSummary(vehicle);
@@ -81,7 +83,6 @@ export function createVehicleViewModels(
       currentBid,
       topBid,
       bidCount,
-      userBid: bid?.latestBid ?? null,
       isAbsolute: vehicle.reserve_price == null,
       statusLabel,
       images: vehicle.images,

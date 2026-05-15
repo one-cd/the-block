@@ -10,9 +10,10 @@ import { VehicleCard } from "./VehicleCard";
 type InventoryPageProps = {
   vehicles: VehicleViewModel[];
   onOpenVehicle: (vehicle: VehicleViewModel) => void;
+  hasBid: (vehicleId: string) => boolean;
 };
 
-export function InventoryPage({ vehicles, onOpenVehicle }: InventoryPageProps) {
+export function InventoryPage({ vehicles, onOpenVehicle, hasBid }: InventoryPageProps) {
   const [tab, setTab] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
   const [absolute, setAbsolute] = useState(false);
@@ -25,10 +26,10 @@ export function InventoryPage({ vehicles, onOpenVehicle }: InventoryPageProps) {
       result = result.filter((vehicle) => vehicle.isAbsolute);
     }
     if (tab === "bids") {
-      result = result.filter((vehicle) => vehicle.userBid != null);
+      result = result.filter((vehicle) => hasBid(vehicle.id));
     }
     return result;
-  }, [vehicles, searchTerm, absolute, tab]);
+  }, [vehicles, searchTerm, absolute, tab, hasBid]);
 
   const handleSearchChange = (value: string) => {
     startTransition(() => setSearchTerm(value));

@@ -6,7 +6,7 @@ import { SuccessToast } from "./components/feedback/SuccessToast";
 import { InventoryPage } from "./components/inventory/InventoryPage";
 import { createVehicleViewModels } from "./data/vehicles";
 import { useNow } from "./hooks/useNow";
-import { useBidState } from "./state/useBidState";
+import { useBrowserSession } from "./state/useBrowserSession";
 import type { VehicleViewModel } from "./types/vehicle";
 import { formatCurrency } from "./utils/format";
 
@@ -16,12 +16,12 @@ type Route =
 
 export default function App() {
   const now = useNow();
-  const { bids, placeBid } = useBidState();
+  const { session, placeBid, hasBid } = useBrowserSession();
   const [route, setRoute] = useState<Route>({ name: "inventory" });
   const [activeBidVehicle, setActiveBidVehicle] = useState<VehicleViewModel | null>(null);
   const [showConfetti, setShowConfetti] = useState(false);
   const [toastAmount, setToastAmount] = useState<string | null>(null);
-  const vehicles = useMemo(() => createVehicleViewModels(bids, now), [bids, now]);
+  const vehicles = useMemo(() => createVehicleViewModels(session, now), [session, now]);
   const activeVehicle = route.name === "detail" ? vehicles.find((vehicle) => vehicle.id === route.vehicleId) ?? null : null;
 
   const openDetail = useCallback((vehicle: VehicleViewModel) => {
@@ -39,7 +39,7 @@ export default function App() {
       return;
     }
 
-    placeBid(activeBidVehicle, amount);
+    placeBid(activeBidVehicle.id, amount);
     setActiveBidVehicle(null);
     setShowConfetti(true);
     setToastAmount(formatCurrency(amount));
@@ -49,11 +49,11 @@ export default function App() {
   return (
     <>
       {route.name === "inventory" ? (
-        <InventoryPage vehicles={vehicles} onOpenVehicle={openDetail} />
+        <InventoryPage vehicles={vehicles} onOpenVehicle={openDetail} hasBid={hasBid} />
       ) : activeVehicle ? (
         <VehicleDetail vehicle={activeVehicle} onBack={backToInventory} onBid={() => setActiveBidVehicle(activeVehicle)} />
       ) : (
-        <InventoryPage vehicles={vehicles} onOpenVehicle={openDetail} />
+        <InventoryPage vehicles={vehicles} onOpenVehicle={openDetail} hasBid={hasBid} />
       )}
 
       {activeBidVehicle ? (

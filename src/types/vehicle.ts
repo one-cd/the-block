@@ -32,10 +32,13 @@ export type VehicleRaw = {
   bid_count: number;
 };
 
-export type BidState = {
-  currentBid: number | null;
-  bidCount: number;
-  latestBid: number | null;
+export type PlacedBid = {
+  amount: number;
+  placedAt: string;
+};
+
+export type BrowserSession = {
+  placedBids: Record<string, PlacedBid>;
 };
 
 export type MarketSummary = {
@@ -81,7 +84,6 @@ export type VehicleViewModel = {
   currentBid: number | null;
   topBid: number;
   bidCount: number;
-  userBid: number | null;
   isAbsolute: boolean;
   statusLabel: string;
   images: string[];
