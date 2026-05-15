@@ -5,7 +5,7 @@ const fixedNow = new Date("2026-05-14T20:00:00-04:00");
 
 describe("vehicle data adapter", () => {
   it("creates OpenLane-shaped vehicle models from the raw dataset", () => {
-    const vehicles = createVehicleViewModels({ placedBids: {} }, fixedNow);
+    const vehicles = createVehicleViewModels({ placedBids: {}, watchlist: {} }, fixedNow);
     const raw = vehiclesRaw[0];
     const vehicle = vehicles[0];
 
@@ -42,6 +42,7 @@ describe("vehicle data adapter", () => {
       placedBids: {
         [raw.id]: { amount: buyerAmount, placedAt: "2026-05-14T20:00:00.000Z" },
       },
+      watchlist: {},
     };
 
     const vehicle = createVehicleViewModels(session, fixedNow)[0];
@@ -55,7 +56,7 @@ describe("vehicle data adapter", () => {
 
 describe("vehicle search", () => {
   it("searches across identifying, dealership, location, mechanical, title, and condition fields", () => {
-    const vehicles = createVehicleViewModels({ placedBids: {} }, fixedNow);
+    const vehicles = createVehicleViewModels({ placedBids: {}, watchlist: {} }, fixedNow);
     const vehicleWithDamage = vehicles.find((vehicle) => vehicle.damageNotes.length > 0);
 
     expect(vehicleWithDamage).toBeDefined();
@@ -77,7 +78,7 @@ describe("vehicle search", () => {
   });
 
   it("returns every vehicle when the search is blank", () => {
-    const vehicles = createVehicleViewModels({ placedBids: {} }, fixedNow);
+    const vehicles = createVehicleViewModels({ placedBids: {}, watchlist: {} }, fixedNow);
 
     expect(filterVehicles(vehicles, "   ")).toHaveLength(vehiclesRaw.length);
   });

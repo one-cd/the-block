@@ -16,7 +16,7 @@ type Route =
 
 export default function App() {
   const now = useNow();
-  const { session, placeBid, hasBid } = useBrowserSession();
+  const { session, placeBid, hasBid, toggleWatchlist, isWatchlisted } = useBrowserSession();
   const [route, setRoute] = useState<Route>({ name: "inventory" });
   const [activeBidVehicle, setActiveBidVehicle] = useState<VehicleViewModel | null>(null);
   const [showConfetti, setShowConfetti] = useState(false);
@@ -49,11 +49,17 @@ export default function App() {
   return (
     <>
       {route.name === "inventory" ? (
-        <InventoryPage vehicles={vehicles} onOpenVehicle={openDetail} hasBid={hasBid} />
+        <InventoryPage vehicles={vehicles} onOpenVehicle={openDetail} hasBid={hasBid} isWatchlisted={isWatchlisted} />
       ) : activeVehicle ? (
-        <VehicleDetail vehicle={activeVehicle} onBack={backToInventory} onBid={() => setActiveBidVehicle(activeVehicle)} />
+        <VehicleDetail
+          vehicle={activeVehicle}
+          onBack={backToInventory}
+          onBid={() => setActiveBidVehicle(activeVehicle)}
+          onToggleWatchlist={() => toggleWatchlist(activeVehicle.id)}
+          isWatchlisted={isWatchlisted(activeVehicle.id)}
+        />
       ) : (
-        <InventoryPage vehicles={vehicles} onOpenVehicle={openDetail} hasBid={hasBid} />
+        <InventoryPage vehicles={vehicles} onOpenVehicle={openDetail} hasBid={hasBid} isWatchlisted={isWatchlisted} />
       )}
 
       {activeBidVehicle ? (

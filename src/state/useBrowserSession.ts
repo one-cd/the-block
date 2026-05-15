@@ -3,7 +3,7 @@ import type { BrowserSession } from "../types/vehicle";
 
 export const SESSION_STORAGE_KEY = "openlane-session-v1";
 
-const EMPTY_SESSION: BrowserSession = { placedBids: {} };
+const EMPTY_SESSION: BrowserSession = { placedBids: {}, watchlist: {} };
 
 export function useBrowserSession() {
   const [session, setSession] = useState<BrowserSession>(() => readStoredSession());
@@ -27,9 +27,28 @@ export function useBrowserSession() {
     [session],
   );
 
+  const toggleWatchlist = useCallback((vehicleId: string) => {
+    setSession((current) => {
+      const nextWatchlist = { ...current.watchlist };
+
+      if (nextWatchlist[vehicleId]) {
+        delete nextWatchlist[vehicleId];
+      } else {
+        nextWatchlist[vehicleId] = true;
+      }
+
+      return { ...current, watchlist: nextWatchlist };
+    });
+  }, []);
+
+  const isWatchlisted = useCallback(
+    (vehicleId: string) => Boolean(session.watchlist[vehicleId]),
+    [session],
+  );
+
   return useMemo(
-    () => ({ session, placeBid, hasBid }),
-    [session, placeBid, hasBid],
+    () => ({ session, placeBid, hasBid, toggleWatchlist, isWatchlisted }),
+    [session, placeBid, hasBid, toggleWatchlist, isWatchlisted],
   );
 }
 
@@ -45,8 +64,21 @@ function readStoredSession(): BrowserSession {
       return EMPTY_SESSION;
     }
 
-    return { placedBids: parsed.placedBids };
+    return {
+      placedBids: parsed.placedBids,
+      watchlist: normalizeWatchlist(parsed.watchlist),
+    };
   } catch {
     return EMPTY_SESSION;
   }
+}
+
+function normalizeWatchlist(value: unknown): Record<string, boolean> {
+  if (!value || typeof value !== "object") {
+    return {};
+  }
+
+  return Object.fromEntries(
+    Object.entries(value).filter(([, isWatched]) => Boolean(isWatched)),
+  );
 }

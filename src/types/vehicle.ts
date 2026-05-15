@@ -39,6 +39,20 @@ export type PlacedBid = {
 
 export type BrowserSession = {
   placedBids: Record<string, PlacedBid>;
+  watchlist: Record<string, boolean>;
+};
+
+export type MarketComparable = {
+  id: string;
+  title: string;
+  year: number;
+  bodyStyle: string;
+  location: string;
+  odometerKm: number;
+  conditionGrade: number;
+  titleStatus: TitleStatus;
+  topPrice: number;
+  buyNowPrice: number | null;
 };
 
 export type MarketSummary = {
@@ -46,6 +60,7 @@ export type MarketSummary = {
   average: number;
   high: number;
   similarCount: number;
+  comparables: MarketComparable[];
 };
 
 export type VehicleViewModel = {

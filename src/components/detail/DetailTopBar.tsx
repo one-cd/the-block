@@ -2,10 +2,12 @@ import { Icon } from "../icons/Icon";
 
 type DetailTopBarProps = {
   endsIn: string;
+  isWatchlisted: boolean;
   onBack: () => void;
+  onToggleWatchlist: () => void;
 };
 
-export function DetailTopBar({ endsIn, onBack }: DetailTopBarProps) {
+export function DetailTopBar({ endsIn, isWatchlisted, onBack, onToggleWatchlist }: DetailTopBarProps) {
   return (
     <div className="detail-top">
       <button className="back-btn" type="button" onClick={onBack}>
@@ -17,7 +19,10 @@ export function DetailTopBar({ endsIn, onBack }: DetailTopBarProps) {
         <span className="time">{endsIn}</span>
       </div>
       <div className="detail-top-right">
-        <button className="btn-outline" type="button"><Icon.Heart size={16} color="#1652F0" /> Watchlist</button>
+        <button className={`btn-outline${isWatchlisted ? " is-active" : ""}`} type="button" onClick={onToggleWatchlist} aria-pressed={isWatchlisted}>
+          <Icon.Heart size={16} color="#1652F0" fill={isWatchlisted ? "#1652F0" : "none"} />
+          {isWatchlisted ? "Watching" : "Watchlist"}
+        </button>
         <button className="btn-outline" type="button"><Icon.Note size={16} /> Notes</button>
       </div>
     </div>

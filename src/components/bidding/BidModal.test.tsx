@@ -10,7 +10,7 @@ const fixedNow = new Date("2026-05-14T20:00:00-04:00");
 describe("BidModal", () => {
   it("blocks bids at or below the visible top bid and confirms valid bids", async () => {
     const user = userEvent.setup();
-    const vehicle = createVehicleViewModels({ placedBids: {} }, fixedNow).find((candidate) => candidate.currentBid != null);
+    const vehicle = createVehicleViewModels({ placedBids: {}, watchlist: {} }, fixedNow).find((candidate) => candidate.currentBid != null);
     const onConfirm = vi.fn();
 
     expect(vehicle).toBeDefined();
