@@ -25,7 +25,7 @@ npx playwright install chromium
 
 ## Time Spent
 
-Roughly 6-8 hours across 2-3 sessions. 
+Roughly 5-6 hours across 2-3 sessions. 
 
 I started by exploring the dataset and challenge requirements, then on paper, I planned out how I would implement the minimal slice, considering the guidance given in the original readme. 
 
