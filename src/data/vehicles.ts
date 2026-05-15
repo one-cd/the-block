@@ -1,5 +1,5 @@
 import rawVehicles from "../../data/vehicles.json";
-import type { BrowserSession, MarketComparable, MarketSummary, VehicleRaw, VehicleViewModel } from "../types/vehicle";
+import type { BrowserSession, VehicleRaw, VehicleViewModel } from "../types/vehicle";
 import { formatAuctionDate, formatCountdown, formatTimeLeft, normalizeAuctionDates } from "../utils/auctionTime";
 import { titleCase } from "../utils/format";
 
@@ -22,7 +22,6 @@ export function createVehicleViewModels(
     const bidCount = vehicle.bid_count + (placedBid ? 1 : 0);
     const topBid = currentBid ?? vehicle.starting_bid;
     const auctionDate = auctionDates.get(vehicle.auction_start) ?? new Date(vehicle.auction_start);
-    const market = createMarketSummary(vehicle);
     const title = [vehicle.year, vehicle.make, vehicle.model, vehicle.trim].filter(Boolean).join(" ");
     const shortTitle = [vehicle.year, vehicle.make, vehicle.model].filter(Boolean).join(" ");
     const statusLabel = bidCount > 0 ? "Active bidding" : "Awaiting bids";
@@ -85,7 +84,6 @@ export function createVehicleViewModels(
       bidCount,
       statusLabel,
       images: vehicle.images,
-      market,
       searchText,
     };
   });
@@ -99,83 +97,4 @@ export function filterVehicles(vehicles: VehicleViewModel[], searchTerm: string)
   }
 
   return vehicles.filter((vehicle) => vehicle.searchText.includes(query));
-}
-
-function createMarketSummary(vehicle: VehicleRaw): MarketSummary {
-  const comparable = findComparableVehicles(vehicle);
-  const pricePoints = comparable
-    .flatMap((candidate) => [
-      candidate.current_bid,
-      candidate.starting_bid,
-      candidate.reserve_price,
-      candidate.buy_now_price,
-    ])
-    .filter((value): value is number => typeof value === "number" && value > 0);
-
-  const fallback = [vehicle.starting_bid, vehicle.current_bid, vehicle.reserve_price, vehicle.buy_now_price].filter(
-    (value): value is number => typeof value === "number" && value > 0,
-  );
-  const values = pricePoints.length > 0 ? pricePoints : fallback;
-  const lowest = Math.min(...values);
-  const high = Math.max(...values);
-  const average = Math.round(values.reduce((sum, value) => sum + value, 0) / values.length / 100) * 100;
-
-  return {
-    lowest,
-    average,
-    high,
-    similarCount: comparable.length,
-    comparables: comparable.slice(0, 8).map(createMarketComparable),
-  };
-}
-
-function createMarketComparable(vehicle: VehicleRaw): MarketComparable {
-  const title = [vehicle.year, vehicle.make, vehicle.model, vehicle.trim].filter(Boolean).join(" ");
-  const prices = [vehicle.current_bid, vehicle.starting_bid, vehicle.reserve_price, vehicle.buy_now_price].filter(
-    (value): value is number => typeof value === "number" && value > 0,
-  );
-
-  return {
-    id: vehicle.id,
-    title,
-    year: vehicle.year,
-    bodyStyle: titleCase(vehicle.body_style),
-    location: `${vehicle.city}, ${vehicle.province}`,
-    odometerKm: vehicle.odometer_km,
-    conditionGrade: vehicle.condition_grade,
-    titleStatus: vehicle.title_status,
-    topPrice: Math.max(...prices),
-    buyNowPrice: vehicle.buy_now_price,
-  };
-}
-
-function findComparableVehicles(vehicle: VehicleRaw): VehicleRaw[] {
-  const sameModel = vehiclesRaw.filter(
-    (candidate) =>
-      candidate.id !== vehicle.id &&
-      candidate.make === vehicle.make &&
-      candidate.model === vehicle.model,
-  );
-  if (sameModel.length >= 3) {
-    return sameModel;
-  }
-
-  const sameMakeAndBody = vehiclesRaw.filter(
-    (candidate) =>
-      candidate.id !== vehicle.id &&
-      candidate.make === vehicle.make &&
-      candidate.body_style === vehicle.body_style &&
-      Math.abs(candidate.year - vehicle.year) <= 3,
-  );
-  if (sameMakeAndBody.length >= 3) {
-    return sameMakeAndBody;
-  }
-
-  const sameBody = vehiclesRaw.filter(
-    (candidate) =>
-      candidate.id !== vehicle.id &&
-      candidate.body_style === vehicle.body_style &&
-      Math.abs(candidate.year - vehicle.year) <= 3,
-  );
-  return sameBody.length > 0 ? sameBody : sameModel;
 }

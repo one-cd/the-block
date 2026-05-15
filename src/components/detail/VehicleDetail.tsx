@@ -4,7 +4,7 @@ import { formatOdometerKm, pluralize } from "../../utils/format";
 import { Icon } from "../icons/Icon";
 import { VehicleImage } from "../media/VehicleImage";
 import { BidBar } from "./BidBar";
-import { DealerCard, MarketDataCard, SpecChips, TransportCard, VehicleFacts } from "./DetailCards";
+import { DealerCard, SpecChips, TransportCard, VehicleFacts } from "./DetailCards";
 import { DetailTopBar } from "./DetailTopBar";
 import { TopNav } from "../layout/TopNav";
 
@@ -19,6 +19,17 @@ type VehicleDetailProps = {
 export function VehicleDetail({ vehicle, onBack, onBid, isWatchlisted, onToggleWatchlist }: VehicleDetailProps) {
   const [selectedImage, setSelectedImage] = useState(0);
   const [isGalleryOpen, setIsGalleryOpen] = useState(false);
+  const [isVinCopied, setIsVinCopied] = useState(false);
+
+  const handleCopyVin = async () => {
+    try {
+      await navigator.clipboard.writeText(vehicle.vin);
+      setIsVinCopied(true);
+      window.setTimeout(() => setIsVinCopied(false), 1500);
+    } catch {
+      // Clipboard may be unavailable (e.g. non-secure context); fail silently.
+    }
+  };
 
   return (
     <div>
@@ -71,8 +82,14 @@ export function VehicleDetail({ vehicle, onBack, onBid, isWatchlisted, onToggleW
             <span className="vin-line">
               <span className="strong">VIN</span>
               <span className="dr-vin">{vehicle.vin}</span>
-              <Icon.Barcode size={18} color="#6b7280" />
-              <Icon.Copy size={14} color="#6b7280" />
+              <button
+                className="vin-copy"
+                type="button"
+                onClick={handleCopyVin}
+                aria-label={isVinCopied ? "VIN copied" : "Copy VIN to clipboard"}
+              >
+                {isVinCopied ? <Icon.Check size={14} color="#16a34a" /> : <Icon.Copy size={14} color="#6b7280" />}
+              </button>
             </span>
           </div>
           <div className="dr-line">
@@ -85,14 +102,9 @@ export function VehicleDetail({ vehicle, onBack, onBid, isWatchlisted, onToggleW
               <span className="red">{pluralize(vehicle.bidCount, "bid")} placed</span>
             </div>
           ) : null}
-          <div className="dr-line">
-            <Icon.Shield size={18} color="#1f2937" />
-            As Described Guarantee {vehicle.titleStatus === "clean" ? "available" : "review recommended"}
-          </div>
 
           <SpecChips vehicle={vehicle} />
           <VehicleFacts vehicle={vehicle} />
-          <MarketDataCard vehicle={vehicle} />
           <TransportCard vehicle={vehicle} />
           <DealerCard vehicle={vehicle} />
         </aside>

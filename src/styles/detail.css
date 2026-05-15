@@ -286,6 +286,27 @@
   max-width: 170px;
 }
 
+.vin-copy {
+  background: none;
+  border: none;
+  padding: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  color: var(--ol-text-2);
+  cursor: pointer;
+}
+
+.vin-copy:hover {
+  background: var(--ol-bg-2);
+}
+
+.vin-copy:focus-visible {
+  outline: 2px solid var(--ol-blue);
+  outline-offset: 1px;
+}
+
 .dr-line {
   padding: 6px 0;
   display: flex;
@@ -342,181 +363,11 @@
   color: var(--ol-ink);
 }
 
-.market-card {
-  border: 1px solid var(--ol-border);
-  border-radius: 8px;
-  padding: 14px 16px 16px;
-  margin-bottom: 16px;
-  background: var(--ol-white);
-}
-
-.market-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  margin-bottom: 12px;
-}
-
-.market-head .left {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-weight: 700;
-  font-size: 14px;
-}
-
-.market-head .new-badge {
-  background: var(--ol-blue);
-  color: white;
-  font-size: 10px;
-  font-weight: 700;
-  padding: 3px 6px;
-  border-radius: 3px;
-  letter-spacing: 0.04em;
-}
-
-.market-head .view-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  border: 1px solid var(--ol-border);
-  background: var(--ol-white);
-  border-radius: 6px;
-  padding: 5px 10px;
-  font-size: 13px;
-  font-weight: 500;
-}
-
-.market-stats {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
-  margin-bottom: 10px;
-}
-
-.market-stat {
-  background: var(--ol-blue-light);
-  border-radius: 8px;
-  padding: 12px 10px;
-  text-align: center;
-}
-
-.market-stat .label {
-  font-size: 13px;
-  color: var(--ol-text-2);
-  margin-bottom: 4px;
-}
-
-.market-stat .val {
-  font-size: 18px;
-  font-weight: 700;
-  color: var(--ol-ink);
-}
-
-.market-foot {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 13px;
-  color: var(--ol-text-2);
-  margin-top: 8px;
-}
-
-.modal.market-modal {
-  max-width: 760px;
-}
-
-.market-modal-subtitle {
-  color: var(--ol-text-2);
-  font-size: 13px;
-  margin-top: 3px;
-}
-
-.market-modal-summary {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
-  padding: 0 24px 16px;
-  border-bottom: 1px solid var(--ol-border);
-}
-
-.market-modal-summary div {
-  background: var(--ol-blue-light);
-  border-radius: 8px;
-  padding: 12px;
-}
-
-.market-modal-summary span,
-.market-row-price span {
-  display: block;
-  color: var(--ol-text-2);
-  font-size: 12px;
-}
-
-.market-modal-summary strong {
-  display: block;
-  color: var(--ol-ink);
-  font-size: 18px;
-  margin-top: 4px;
-}
-
-.market-modal-list {
-  overflow-y: auto;
-  padding: 4px 24px 20px;
-}
-
-.market-row {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 18px;
-  padding: 14px 0;
-  border-bottom: 1px solid var(--ol-border);
-}
-
-.market-row:last-child {
-  border-bottom: none;
-}
-
-.market-row-title {
-  font-weight: 700;
-  color: var(--ol-ink);
-  margin-bottom: 4px;
-}
-
-.market-row-meta {
-  color: var(--ol-text-2);
-  font-size: 13px;
-  line-height: 1.45;
-}
-
-.market-row-price {
-  text-align: right;
-  min-width: 130px;
-}
-
-.market-row-price strong {
-  display: block;
-  font-size: 18px;
-  color: var(--ol-ink);
-  margin-bottom: 3px;
-}
-
-.market-empty {
-  color: var(--ol-text-2);
-  padding: 22px 0;
-  text-align: center;
-}
-
 .transport-card {
   background: var(--ol-bg-2);
   border-radius: 8px;
   padding: 16px;
   margin-bottom: 14px;
-  display: grid;
-  grid-template-columns: 1fr auto;
-  align-items: start;
-  gap: 12px;
 }
 
 .transport-head {
@@ -534,22 +385,9 @@
   margin-bottom: 12px;
 }
 
-.transport-meta {
-  font-size: 14px;
-  color: var(--ol-ink);
-  margin-bottom: 6px;
-  font-weight: 600;
-}
-
 .transport-delivery {
   font-size: 13px;
   color: var(--ol-text-2);
-}
-
-.transport-price {
-  font-size: 22px;
-  font-weight: 700;
-  align-self: end;
 }
 
 .dealer-card {
@@ -576,7 +414,6 @@
   background: #f0b81e;
   color: #333333;
   font-weight: 800;
-  font-size: 8px;
   text-align: center;
   width: 30px;
   height: 32px;
@@ -589,14 +426,10 @@
 }
 
 .route66-top {
-  font-size: 5px;
+  font-size: 8px;
   color: #000000;
-}
-
-.route66-main {
-  font-size: 10px;
-  color: #000000;
-  font-weight: 900;
+  font-weight: 800;
+  letter-spacing: 0.05em;
 }
 
 .dealer-card .name {

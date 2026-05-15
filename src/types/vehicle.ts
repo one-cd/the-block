@@ -42,27 +42,6 @@ export type BrowserSession = {
   watchlist: Record<string, boolean>;
 };
 
-export type MarketComparable = {
-  id: string;
-  title: string;
-  year: number;
-  bodyStyle: string;
-  location: string;
-  odometerKm: number;
-  conditionGrade: number;
-  titleStatus: TitleStatus;
-  topPrice: number;
-  buyNowPrice: number | null;
-};
-
-export type MarketSummary = {
-  lowest: number;
-  average: number;
-  high: number;
-  similarCount: number;
-  comparables: MarketComparable[];
-};
-
 export type VehicleViewModel = {
   id: string;
   lot: string;
@@ -101,6 +80,5 @@ export type VehicleViewModel = {
   bidCount: number;
   statusLabel: string;
   images: string[];
-  market: MarketSummary;
   searchText: string;
 };

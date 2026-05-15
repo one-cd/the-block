@@ -165,7 +165,6 @@
   }
 
   .spec-chips,
-  .market-stats,
   .dealer-actions,
   .dealer-stats {
     flex-direction: column;
@@ -181,10 +180,6 @@
     border-bottom: none;
   }
 
-  .transport-card {
-    grid-template-columns: 1fr;
-  }
-
   .bid-bar {
     padding: 10px 12px;
     gap: 10px;
@@ -193,15 +188,6 @@
 
   .auction-state-pills {
     margin-left: 0;
-  }
-
-  .market-modal-summary,
-  .market-row {
-    grid-template-columns: 1fr;
-  }
-
-  .market-row-price {
-    text-align: left;
   }
 
   .bid-bar .btn-bid {

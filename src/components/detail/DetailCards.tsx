@@ -1,6 +1,5 @@
-import { useEffect, useState } from "react";
 import type { VehicleViewModel } from "../../types/vehicle";
-import { formatCurrency, formatNumber, formatOdometerKm, titleCase } from "../../utils/format";
+import { formatCurrency, titleCase } from "../../utils/format";
 import { Icon } from "../icons/Icon";
 
 export function SpecChips({ vehicle }: { vehicle: VehicleViewModel }) {
@@ -33,128 +32,17 @@ export function VehicleFacts({ vehicle }: { vehicle: VehicleViewModel }) {
   );
 }
 
-export function MarketDataCard({ vehicle }: { vehicle: VehicleViewModel }) {
-  const [isOpen, setIsOpen] = useState(false);
-
-  return (
-    <>
-      <div className="market-card">
-        <div className="market-head">
-          <div className="left">
-            <span className="new-badge">NEW!</span>
-            OPENLANE Market Data
-            <Icon.Help size={16} bg="#9ca3af" />
-          </div>
-          <button className="view-btn" type="button" onClick={() => setIsOpen(true)}>
-            <Icon.TrendUp size={14} color="#1f2937" /> View
-          </button>
-        </div>
-        <div className="market-stats">
-          <div className="market-stat">
-            <div className="label">Lowest</div>
-            <div className="val">{formatCurrency(vehicle.market.lowest)}</div>
-          </div>
-          <div className="market-stat">
-            <div className="label">Average</div>
-            <div className="val">{formatCurrency(vehicle.market.average)}</div>
-          </div>
-          <div className="market-stat">
-            <div className="label">High</div>
-            <div className="val">{formatCurrency(vehicle.market.high)}</div>
-          </div>
-        </div>
-        <div className="market-foot">
-          <Icon.Car size={16} color="#6b7280" />
-          {formatNumber(vehicle.market.similarCount)} Similar vehicles in this dataset
-        </div>
-      </div>
-      {isOpen ? <MarketDataModal vehicle={vehicle} onClose={() => setIsOpen(false)} /> : null}
-    </>
-  );
-}
-
-function MarketDataModal({ vehicle, onClose }: { vehicle: VehicleViewModel; onClose: () => void }) {
-  useEffect(() => {
-    const onKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        onClose();
-      }
-    };
-
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [onClose]);
-
-  return (
-    <div className="modal-backdrop" onMouseDown={(event) => {
-      if (event.target === event.currentTarget) {
-        onClose();
-      }
-    }}>
-      <div className="modal market-modal" role="dialog" aria-label="Market data" aria-modal="true">
-        <div className="modal-head">
-          <div>
-            <h2 className="modal-title">Market data</h2>
-            <div className="market-modal-subtitle">{vehicle.title}</div>
-          </div>
-          <button className="modal-close" type="button" onClick={onClose} aria-label="Close market data">
-            <Icon.Cross size={20} />
-          </button>
-        </div>
-        <div className="market-modal-summary">
-          <div>
-            <span>Lowest</span>
-            <strong>{formatCurrency(vehicle.market.lowest)}</strong>
-          </div>
-          <div>
-            <span>Average</span>
-            <strong>{formatCurrency(vehicle.market.average)}</strong>
-          </div>
-          <div>
-            <span>High</span>
-            <strong>{formatCurrency(vehicle.market.high)}</strong>
-          </div>
-        </div>
-        <div className="market-modal-list">
-          {vehicle.market.comparables.length > 0 ? vehicle.market.comparables.map((comparable) => (
-            <div className="market-row" key={comparable.id}>
-              <div>
-                <div className="market-row-title">{comparable.title}</div>
-                <div className="market-row-meta">
-                  {comparable.bodyStyle} · {formatOdometerKm(comparable.odometerKm)} · {titleCase(comparable.titleStatus)} title
-                </div>
-                <div className="market-row-meta">{comparable.location}</div>
-              </div>
-              <div className="market-row-price">
-                <strong>{formatCurrency(comparable.buyNowPrice ?? comparable.topPrice)}</strong>
-                <span>{comparable.buyNowPrice == null ? "Top listed price" : "Buy now"}</span>
-                <span>Grade {comparable.conditionGrade.toFixed(1)}</span>
-              </div>
-            </div>
-          )) : (
-            <div className="market-empty">No comparable vehicles are available in this dataset.</div>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-}
-
 export function TransportCard({ vehicle }: { vehicle: VehicleViewModel }) {
-  const estimate = Math.max(250, Math.round((vehicle.odometerKm / 125) + 350));
-
   return (
     <div className="transport-card">
       <div>
         <div className="transport-head">
           <Icon.Truck size={22} color="#1f2937" />
-          Transport destination
+          Pickup destination
         </div>
         <div className="transport-addr">{vehicle.city}, {vehicle.province}</div>
-        <div className="transport-meta">Vehicle location from listing</div>
         <div className="transport-delivery">Auction <b>{vehicle.auctionLabel}</b></div>
       </div>
-      <div className="transport-price">{formatCurrency(estimate)}</div>
     </div>
   );
 }
@@ -166,7 +54,6 @@ export function DealerCard({ vehicle }: { vehicle: VehicleViewModel }) {
         <div className="logo">
           <div className="route66">
             <div className="route66-top">LOT</div>
-            <div className="route66-main">{vehicle.lot.slice(0, 1)}</div>
           </div>
         </div>
         <div>
