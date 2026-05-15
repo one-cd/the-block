@@ -31,7 +31,7 @@ describe("vehicle data adapter", () => {
       location: `${raw.city}, ${raw.province}`,
     });
     expect(vehicle.auctionDate.getTime()).toBeGreaterThan(fixedNow.getTime());
-    expect(vehicle.countdown).toMatch(/^\d{2,3}:\d{2}:\d{2}$/);
+    expect(vehicle.countdown).toMatch(/^(\d+d )?\d{2}:\d{2}:\d{2}$/);
     expect(vehicle.searchText).toContain(raw.vin.toLowerCase());
   });
 
