@@ -9,7 +9,6 @@ const tabs = [
   { id: "all", label: "All inventory", chev: true },
   { id: "bids", label: "Bids" },
   { id: "watch", label: "Watchlist" },
-  { id: "hidden", label: "Hidden" },
 ];
 
 export function SubNav({ tab, onTabChange }: SubNavProps) {
