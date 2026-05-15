@@ -204,14 +204,6 @@
     max-height: calc(100vh - 16px);
   }
 
-  .service-row {
-    align-items: flex-start;
-  }
-
-  .service-row .name {
-    white-space: normal;
-  }
-
   .modal-footer {
     padding: 12px;
   }

@@ -65,9 +65,6 @@ export function DealerCard({ vehicle }: { vehicle: VehicleViewModel }) {
         </div>
       </div>
       <div className="dealer-actions">
-        <button className="btn-primary" type="button">
-          Follow <Icon.Plus size={14} color="white" />
-        </button>
         <div className="dealer-stats">
           <div><Icon.Pie size={16} color="#374151" /> {vehicle.conditionGrade.toFixed(1)}</div>
           <div className="sep" />

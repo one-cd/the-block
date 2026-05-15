@@ -453,29 +453,10 @@
   padding: 4px 0 0;
 }
 
-.btn-primary {
-  background: var(--ol-blue);
-  color: white;
-  border: none;
-  border-radius: 6px;
-  padding: 10px 22px;
-  font-size: 14px;
-  font-weight: 600;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.btn-primary:hover {
-  background: var(--ol-blue-hover);
-}
-
 .dealer-stats {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding-left: 14px;
-  border-left: 1px solid var(--ol-border);
   color: var(--ol-text);
   font-size: 14px;
 }
