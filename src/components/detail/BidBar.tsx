@@ -10,7 +10,7 @@ export function BidBar({ vehicle, onBidClick }: BidBarProps) {
   return (
     <div className="bid-bar">
       <div className="auction-state-pills">
-        {vehicle.buyNowPrice != null ? <span className="auction-state-pill buy-now">Buy now {formatCurrency(vehicle.buyNowPrice)}</span> : null}
+        {vehicle.buyNowPrice != null ? <span className="auction-state-pill buy-now">Buy Now price {formatCurrency(vehicle.buyNowPrice)}</span> : null}
         <span className={`auction-state-pill${vehicle.bidCount > 0 ? " active" : ""}`}>{vehicle.statusLabel}</span>
       </div>
       <div className="top-bid">

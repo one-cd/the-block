@@ -20,7 +20,7 @@ export function VehicleFacts({ vehicle }: { vehicle: VehicleViewModel }) {
     `${vehicle.interiorColor} interior`,
     `${titleCase(vehicle.titleStatus)} title`,
     vehicle.reservePrice == null ? "No reserve listed" : `Reserve ${formatCurrency(vehicle.reservePrice)}`,
-    vehicle.buyNowPrice == null ? "No buy now price" : `Buy now ${formatCurrency(vehicle.buyNowPrice)}`,
+    vehicle.buyNowPrice == null ? "No Buy Now price" : `Buy Now price ${formatCurrency(vehicle.buyNowPrice)}`,
   ];
 
   return (

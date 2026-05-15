@@ -1,5 +1,5 @@
 export const AUCTION_STATE_OPTIONS = [
-  { value: "buy-now", label: "Buy now" },
+  { value: "buy-now", label: "Buy Now listed" },
   { value: "awaiting-bids", label: "Awaiting bids" },
   { value: "active-bidding", label: "Active bidding" },
 ] as const;
@@ -14,7 +14,7 @@ export const SORT_OPTIONS = [
   { value: "mileage", label: "Mileage" },
   { value: "year", label: "Year" },
   { value: "condition", label: "Condition grade" },
-  { value: "buyNow", label: "Buy-now price" },
+  { value: "buyNow", label: "Buy Now price" },
 ] as const;
 
 export type AuctionState = (typeof AUCTION_STATE_OPTIONS)[number]["value"];

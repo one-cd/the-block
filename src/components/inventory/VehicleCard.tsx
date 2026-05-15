@@ -31,7 +31,7 @@ export function VehicleCard({ vehicle, onClick }: VehicleCardProps) {
           <span>{formatOdometerKm(vehicle.odometerKm)}</span>
         </div>
         <div className="vcard-badges">
-          {vehicle.buyNowPrice != null ? <span className="auction-badge buy-now">Buy now</span> : null}
+          {vehicle.buyNowPrice != null ? <span className="auction-badge buy-now">Buy Now listed</span> : null}
           <span className={`auction-badge${vehicle.bidCount > 0 ? " active" : ""}`}>{vehicle.statusLabel}</span>
         </div>
         <div className="vcard-stats">
@@ -44,7 +44,7 @@ export function VehicleCard({ vehicle, onClick }: VehicleCardProps) {
         </div>
       </div>
       <div className="vcard-footer">
-        <span className="label">{vehicle.currentBid == null ? "Starts" : "Top bid"}</span>
+        <span className="label">{vehicle.isTopBidder ? "Your bid" : vehicle.currentBid == null ? "Starts" : "Top bid"}</span>
         <span className="price">{formatCurrency(vehicle.topBid)}</span>
       </div>
     </button>
