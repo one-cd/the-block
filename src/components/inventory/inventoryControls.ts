@@ -59,7 +59,6 @@ export type SavedSearch = (typeof SAVED_SEARCH_OPTIONS)[number]["value"];
 export type SortKey = (typeof SORT_OPTIONS)[number]["value"];
 
 export type InventoryFilters = {
-  absolute: boolean;
   mileage: MileageFilter;
   year: YearFilter;
   makeModel: string;
@@ -85,7 +84,6 @@ export type FilterOptions = {
 };
 
 export const EMPTY_FILTERS: InventoryFilters = {
-  absolute: false,
   mileage: "any",
   year: "any",
   makeModel: "",

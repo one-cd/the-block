@@ -83,7 +83,6 @@ export function createVehicleViewModels(
       currentBid,
       topBid,
       bidCount,
-      isAbsolute: vehicle.reserve_price == null,
       statusLabel,
       images: vehicle.images,
       market,

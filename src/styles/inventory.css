@@ -103,16 +103,6 @@
   gap: 8px;
 }
 
-.absolute-sale {
-  margin-left: auto;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 14px;
-  color: var(--ol-text);
-  white-space: nowrap;
-}
-
 .clear-filters {
   height: 38px;
   border: none;

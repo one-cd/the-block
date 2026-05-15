@@ -99,7 +99,6 @@ export type VehicleViewModel = {
   currentBid: number | null;
   topBid: number;
   bidCount: number;
-  isAbsolute: boolean;
   statusLabel: string;
   images: string[];
   market: MarketSummary;

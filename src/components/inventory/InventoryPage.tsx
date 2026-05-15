@@ -135,9 +135,6 @@ function uniqueSorted(values: string[]): string[] {
 }
 
 function matchesFilters(vehicle: VehicleViewModel, filters: InventoryFilters): boolean {
-  if (filters.absolute && !vehicle.isAbsolute) {
-    return false;
-  }
   if (filters.makeModel && vehicle.make !== filters.makeModel && `${vehicle.make} ${vehicle.model}` !== filters.makeModel) {
     return false;
   }
@@ -264,13 +261,7 @@ function priceOrLast(value: number | null): number {
 }
 
 function countActiveFilters(filters: InventoryFilters): number {
-  return Object.entries(filters).filter(([key, value]) => {
-    if (key === "absolute") {
-      return Boolean(value);
-    }
-
-    return value !== "" && value !== "any";
-  }).length;
+  return Object.values(filters).filter((value) => value !== "" && value !== "any").length;
 }
 
 function createSavedSearchFilters(savedSearch: SavedSearch): InventoryFilters {

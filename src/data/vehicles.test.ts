@@ -26,7 +26,6 @@ describe("vehicle data adapter", () => {
       currentBid: raw.current_bid,
       bidCount: raw.bid_count,
       topBid: raw.current_bid ?? raw.starting_bid,
-      isAbsolute: raw.reserve_price == null,
       sellingDealership: raw.selling_dealership,
       location: `${raw.city}, ${raw.province}`,
     });

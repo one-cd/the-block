@@ -54,16 +54,6 @@ export function FilterBar({
           options={SAVED_SEARCH_OPTIONS}
           onChange={(value) => onSavedSearchChange(value as SavedSearch)}
         />
-        <div className="absolute-sale">
-          <span>Absolute sale</span>
-          <button
-            className={`toggle${filters.absolute ? " is-on" : ""}`}
-            type="button"
-            onClick={() => onFilterChange("absolute", !filters.absolute)}
-            aria-label="Absolute sale"
-            aria-pressed={filters.absolute}
-          />
-        </div>
         <SelectPill
           ariaLabel="Mileage"
           value={filters.mileage}
