@@ -7,23 +7,29 @@ export type MultiSelectOption = {
 };
 
 type MultiSelectPillProps = {
+  id: string;
   label: string;
   options: readonly MultiSelectOption[];
   selected: readonly string[];
   searchable?: boolean;
   searchPlaceholder?: string;
+  openId: string | null;
+  onOpenChange: (next: string | null) => void;
   onChange: (next: string[]) => void;
 };
 
 export function MultiSelectPill({
+  id,
   label,
   options,
   selected,
   searchable = false,
   searchPlaceholder,
+  openId,
+  onOpenChange,
   onChange,
 }: MultiSelectPillProps) {
-  const [open, setOpen] = useState(false);
+  const open = openId === id;
   const [query, setQuery] = useState("");
   const wrapRef = useRef<HTMLDivElement>(null);
   const searchRef = useRef<HTMLInputElement>(null);
@@ -44,12 +50,12 @@ export function MultiSelectPill({
 
     const handlePointerDown = (event: MouseEvent) => {
       if (!wrapRef.current?.contains(event.target as Node)) {
-        setOpen(false);
+        onOpenChange(null);
       }
     };
     const handleKey = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
-        setOpen(false);
+        onOpenChange(null);
       }
     };
 
@@ -59,7 +65,7 @@ export function MultiSelectPill({
       window.removeEventListener("mousedown", handlePointerDown);
       window.removeEventListener("keydown", handleKey);
     };
-  }, [open]);
+  }, [open, onOpenChange]);
 
   useEffect(() => {
     if (open && searchable) {
@@ -92,7 +98,7 @@ export function MultiSelectPill({
         aria-haspopup="listbox"
         aria-expanded={open}
         aria-controls={listboxId}
-        onClick={() => setOpen((value) => !value)}
+        onClick={() => onOpenChange(open ? null : id)}
       >
         <span className="ms-pill-label">{displayLabel}</span>
         <Icon.Chevron size={14} color={isActive ? "currentColor" : "#6b7280"} dir={open ? "up" : "down"} />
@@ -147,7 +153,7 @@ export function MultiSelectPill({
             >
               Clear
             </button>
-            <button type="button" className="ms-pop-done" onClick={() => setOpen(false)}>
+            <button type="button" className="ms-pop-done" onClick={() => onOpenChange(null)}>
               Done
             </button>
           </div>

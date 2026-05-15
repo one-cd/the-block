@@ -1,7 +1,8 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Icon } from "../icons/Icon";
 import { MultiSelectPill, type MultiSelectOption } from "./MultiSelectPill";
 import { RangeSliderPill } from "./RangeSliderPill";
+import { SingleSelectPill } from "./SingleSelectPill";
 import { formatKm } from "./ActiveFilterChips";
 import {
   AUCTION_STATE_OPTIONS,
@@ -37,6 +38,8 @@ export function FilterBar({
   onClearFilters,
   onExpandedChange,
 }: FilterBarProps) {
+  const [openFilterId, setOpenFilterId] = useState<string | null>(null);
+
   useEffect(() => {
     if (!isExpanded) {
       return;
@@ -49,6 +52,10 @@ export function FilterBar({
     window.addEventListener("keydown", handleKey);
     return () => window.removeEventListener("keydown", handleKey);
   }, [isExpanded, onExpandedChange]);
+
+  useEffect(() => {
+    setOpenFilterId(null);
+  }, [isExpanded]);
 
   const hasAny = activeFilterCount > 0 || searchTerm.trim().length > 0;
 
@@ -66,31 +73,40 @@ export function FilterBar({
         </label>
 
         <MultiSelectPill
+          id="makeModels"
           label="Make/model"
           options={toLabelOptions(options.makeModels)}
           selected={filters.makeModels}
           searchable
           searchPlaceholder="Search make or model"
+          openId={openFilterId}
+          onOpenChange={setOpenFilterId}
           onChange={(next) => onFilterChange("makeModels", next)}
         />
 
         <RangeSliderPill
+          id="mileage"
           label="Mileage"
           bounds={bounds.mileage}
           step={1000}
           value={filters.mileageRange}
           formatValue={formatKm}
           formatSummary={(value, bounds) => `Mileage ${formatMileageSummary(value, bounds)}`}
+          openId={openFilterId}
+          onOpenChange={setOpenFilterId}
           onChange={(next) => onFilterChange("mileageRange", next)}
         />
 
         <RangeSliderPill
+          id="year"
           label="Year"
           bounds={bounds.year}
           step={1}
           value={filters.yearRange}
           formatValue={(value) => `${value}`}
           formatSummary={(value, bounds) => `Year ${formatYearSummary(value, bounds)}`}
+          openId={openFilterId}
+          onOpenChange={setOpenFilterId}
           onChange={(next) => onFilterChange("yearRange", next)}
         />
 
@@ -134,59 +150,92 @@ export function FilterBar({
 
             <div className="advanced-filters-list">
               <MultiSelectPill
+                id="auctionStates"
                 label="Auction state"
                 options={[...AUCTION_STATE_OPTIONS]}
                 selected={filters.auctionStates}
+                openId={openFilterId}
+                onOpenChange={setOpenFilterId}
                 onChange={(next) => onFilterChange("auctionStates", next as InventoryFilters["auctionStates"])}
               />
               <MultiSelectPill
+                id="bodyStyles"
                 label="Body style"
                 options={toLabelOptions(options.bodyStyles)}
                 selected={filters.bodyStyles}
+                openId={openFilterId}
+                onOpenChange={setOpenFilterId}
                 onChange={(next) => onFilterChange("bodyStyles", next)}
               />
               <MultiSelectPill
+                id="fuelTypes"
                 label="Fuel type"
                 options={toLabelOptions(options.fuelTypes)}
                 selected={filters.fuelTypes}
+                openId={openFilterId}
+                onOpenChange={setOpenFilterId}
                 onChange={(next) => onFilterChange("fuelTypes", next)}
               />
               <MultiSelectPill
+                id="drivetrains"
                 label="Drivetrain"
                 options={toLabelOptions(options.drivetrains)}
                 selected={filters.drivetrains}
+                openId={openFilterId}
+                onOpenChange={setOpenFilterId}
                 onChange={(next) => onFilterChange("drivetrains", next)}
               />
               <MultiSelectPill
+                id="transmissions"
                 label="Transmission"
                 options={toLabelOptions(options.transmissions)}
                 selected={filters.transmissions}
+                openId={openFilterId}
+                onOpenChange={setOpenFilterId}
                 onChange={(next) => onFilterChange("transmissions", next)}
               />
               <MultiSelectPill
+                id="titleStatuses"
                 label="Title status"
                 options={toLabelOptions(options.titleStatuses)}
                 selected={filters.titleStatuses}
+                openId={openFilterId}
+                onOpenChange={setOpenFilterId}
                 onChange={(next) => onFilterChange("titleStatuses", next)}
               />
               <MultiSelectPill
+                id="provinces"
                 label="Province"
                 options={toLabelOptions(options.provinces)}
                 selected={filters.provinces}
                 searchable
                 searchPlaceholder="Search province"
+                openId={openFilterId}
+                onOpenChange={setOpenFilterId}
                 onChange={(next) => onFilterChange("provinces", next)}
               />
               <RangeSliderPill
+                id="condition"
                 label="Condition grade"
                 bounds={bounds.condition}
                 step={0.1}
                 value={filters.conditionRange}
                 formatValue={(value) => value.toFixed(1)}
                 formatSummary={(value, bounds) => `Grade ${formatConditionSummary(value, bounds)}`}
+                openId={openFilterId}
+                onOpenChange={setOpenFilterId}
                 onChange={(next) => onFilterChange("conditionRange", next)}
               />
-              <DamageSelect value={filters.damage} onChange={(next) => onFilterChange("damage", next)} />
+              <SingleSelectPill
+                id="damage"
+                label="Damage"
+                options={DAMAGE_OPTIONS}
+                value={filters.damage}
+                defaultValue="any"
+                openId={openFilterId}
+                onOpenChange={setOpenFilterId}
+                onChange={(next) => onFilterChange("damage", next)}
+              />
             </div>
 
             <div className="advanced-filters-foot">
@@ -245,28 +294,4 @@ function formatConditionSummary(value: Range, bounds: Range): string {
     return `≥ ${value.min.toFixed(1)}`;
   }
   return `${value.min.toFixed(1)}–${value.max.toFixed(1)}`;
-}
-
-type DamageSelectProps = {
-  value: InventoryFilters["damage"];
-  onChange: (value: InventoryFilters["damage"]) => void;
-};
-
-function DamageSelect({ value, onChange }: DamageSelectProps) {
-  return (
-    <label className="select-pill">
-      <select
-        value={value}
-        onChange={(event) => onChange(event.target.value as InventoryFilters["damage"])}
-        aria-label="Damage"
-      >
-        {DAMAGE_OPTIONS.map((option) => (
-          <option key={`damage-${option.value}`} value={option.value}>
-            {option.label}
-          </option>
-        ))}
-      </select>
-      <Icon.Chevron size={14} color="#6b7280" />
-    </label>
-  );
 }

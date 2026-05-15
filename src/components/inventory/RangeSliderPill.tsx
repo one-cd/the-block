@@ -1,27 +1,33 @@
-import { useEffect, useId, useRef, useState } from "react";
+import { useEffect, useId, useRef } from "react";
 import { Icon } from "../icons/Icon";
 import { isRangeNarrowed, type Range } from "./inventoryControls";
 
 type RangeSliderPillProps = {
+  id: string;
   label: string;
   bounds: Range;
   step?: number;
   value: Range;
   formatValue: (value: number) => string;
   formatSummary: (value: Range, bounds: Range) => string;
+  openId: string | null;
+  onOpenChange: (next: string | null) => void;
   onChange: (next: Range) => void;
 };
 
 export function RangeSliderPill({
+  id,
   label,
   bounds,
   step = 1,
   value,
   formatValue,
   formatSummary,
+  openId,
+  onOpenChange,
   onChange,
 }: RangeSliderPillProps) {
-  const [open, setOpen] = useState(false);
+  const open = openId === id;
   const wrapRef = useRef<HTMLDivElement>(null);
   const dialogId = useId();
 
@@ -32,12 +38,12 @@ export function RangeSliderPill({
 
     const handlePointerDown = (event: MouseEvent) => {
       if (!wrapRef.current?.contains(event.target as Node)) {
-        setOpen(false);
+        onOpenChange(null);
       }
     };
     const handleKey = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
-        setOpen(false);
+        onOpenChange(null);
       }
     };
 
@@ -47,7 +53,7 @@ export function RangeSliderPill({
       window.removeEventListener("mousedown", handlePointerDown);
       window.removeEventListener("keydown", handleKey);
     };
-  }, [open]);
+  }, [open, onOpenChange]);
 
   const narrowed = isRangeNarrowed(value, bounds);
   const summary = narrowed ? formatSummary(value, bounds) : label;
@@ -77,7 +83,7 @@ export function RangeSliderPill({
         aria-haspopup="dialog"
         aria-expanded={open}
         aria-controls={dialogId}
-        onClick={() => setOpen((current) => !current)}
+        onClick={() => onOpenChange(open ? null : id)}
       >
         <span className="ms-pill-label">{summary}</span>
         <Icon.Chevron size={14} color={narrowed || open ? "currentColor" : "#6b7280"} dir={open ? "up" : "down"} />
@@ -138,7 +144,7 @@ export function RangeSliderPill({
             <button type="button" className="ms-pop-clear" onClick={reset} disabled={!narrowed}>
               Reset
             </button>
-            <button type="button" className="ms-pop-done" onClick={() => setOpen(false)}>
+            <button type="button" className="ms-pop-done" onClick={() => onOpenChange(null)}>
               Done
             </button>
           </div>

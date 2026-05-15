@@ -1,12 +1,10 @@
-import { Icon } from "../icons/Icon";
-
 type SubNavProps = {
   tab: string;
   onTabChange: (tab: string) => void;
 };
 
 const tabs = [
-  { id: "all", label: "All inventory", chev: true },
+  { id: "all", label: "All inventory" },
   { id: "bids", label: "Bids" },
   { id: "watch", label: "Watchlist" },
 ];
@@ -22,7 +20,6 @@ export function SubNav({ tab, onTabChange }: SubNavProps) {
           onClick={() => onTabChange(item.id)}
         >
           {item.label}
-          {item.chev ? <Icon.Chevron size={14} color="currentColor" /> : null}
         </button>
       ))}
     </div>
