@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import type { BrowserSession } from "../types/vehicle";
+import type { BrowserSession, PlacedBid } from "../types/vehicle";
 
 export const SESSION_STORAGE_KEY = "openlane-session-v1";
 
@@ -65,12 +65,35 @@ function readStoredSession(): BrowserSession {
     }
 
     return {
-      placedBids: parsed.placedBids,
+      placedBids: normalizePlacedBids(parsed.placedBids),
       watchlist: normalizeWatchlist(parsed.watchlist),
     };
   } catch {
     return EMPTY_SESSION;
   }
+}
+
+function normalizePlacedBids(value: unknown): Record<string, PlacedBid> {
+  if (!value || typeof value !== "object") {
+    return {};
+  }
+
+  const bids: Record<string, PlacedBid> = {};
+
+  for (const [vehicleId, bid] of Object.entries(value)) {
+    if (!bid || typeof bid !== "object") {
+      continue;
+    }
+
+    const candidate = bid as Partial<PlacedBid>;
+    if (typeof candidate.amount !== "number" || !Number.isFinite(candidate.amount) || typeof candidate.placedAt !== "string") {
+      continue;
+    }
+
+    bids[vehicleId] = { amount: candidate.amount, placedAt: candidate.placedAt };
+  }
+
+  return bids;
 }
 
 function normalizeWatchlist(value: unknown): Record<string, boolean> {

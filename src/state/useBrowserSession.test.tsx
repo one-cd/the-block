@@ -82,4 +82,21 @@ describe("useBrowserSession persistence", () => {
     expect(screen.getByTestId("has-bid")).toHaveTextContent("false");
     expect(screen.getByTestId("is-watchlisted")).toHaveTextContent("false");
   });
+
+  it("ignores malformed stored bids without dropping valid watchlist state", () => {
+    localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify({
+      placedBids: {
+        [testVehicle.id]: { amount: "not-a-number", placedAt: "2026-05-14T20:00:00.000Z" },
+      },
+      watchlist: {
+        [testVehicle.id]: true,
+      },
+    }));
+
+    render(<SessionHarness />);
+
+    expect(screen.getByTestId("placed-amount")).toHaveTextContent("none");
+    expect(screen.getByTestId("has-bid")).toHaveTextContent("false");
+    expect(screen.getByTestId("is-watchlisted")).toHaveTextContent("true");
+  });
 });
