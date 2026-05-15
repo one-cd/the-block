@@ -21,6 +21,7 @@ test("buyer can search inventory, open detail, place a bid, and see it after rel
 
   const topBidText = await page.locator(".top-bid b").innerText();
   const topBid = Number(topBidText.replace(/[^0-9]/g, ""));
+  const minimumBid = topBid + 100;
   const newBid = topBid + 1_000;
 
   await page.getByRole("button", { name: "Bid" }).click();
@@ -28,12 +29,12 @@ test("buyer can search inventory, open detail, place a bid, and see it after rel
 
   await page.locator("#bid-amount").fill(String(topBid));
   await expect(page.getByRole("button", { name: "Confirm bid" })).toBeDisabled();
-  await expect(page.locator(".field-error")).toContainText(`Bid must be above ${topBidText}.`);
+  await expect(page.locator(".field-error")).toContainText(`Bid must be at least $${minimumBid.toLocaleString("en-US")}.`);
 
   await page.locator("#bid-amount").fill(String(newBid));
   await page.getByRole("button", { name: "Confirm bid" }).click();
 
-  await expect(page.locator(".success-toast")).toContainText(`Your bid for $${newBid.toLocaleString("en-US")}`);
+  await expect(page.locator(".success-toast")).toContainText(`Your bid of $${newBid.toLocaleString("en-US")} is in.`);
   await expect(page.locator(".top-bid b")).toHaveText(`$${newBid.toLocaleString("en-US")}`);
 
   await page.reload();

@@ -8,7 +8,7 @@ import { BidModal } from "./BidModal";
 const fixedNow = new Date("2026-05-14T20:00:00-04:00");
 
 describe("BidModal", () => {
-  it("blocks bids at or below the visible top bid and confirms valid bids", async () => {
+  it("blocks bids below the minimum next bid and confirms valid bids", async () => {
     const user = userEvent.setup();
     const vehicle = createVehicleViewModels({ placedBids: {}, watchlist: {} }, fixedNow).find((candidate) => candidate.currentBid != null);
     const onConfirm = vi.fn();
@@ -23,7 +23,7 @@ describe("BidModal", () => {
     await user.type(bidInput, String(vehicle!.topBid));
 
     expect(confirmButton).toBeDisabled();
-    expect(screen.getByText(`Bid must be above ${formatCurrency(vehicle!.topBid)}.`)).toBeInTheDocument();
+    expect(screen.getByText(`Bid must be at least ${formatCurrency(vehicle!.topBid + 100)}.`)).toBeInTheDocument();
 
     const validBid = vehicle!.topBid + 1_000;
     await user.clear(bidInput);
