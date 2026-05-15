@@ -1,5 +1,5 @@
 import type { VehicleViewModel } from "../../types/vehicle";
-import { formatCurrency } from "../../utils/format";
+import { formatCurrency, pluralize } from "../../utils/format";
 
 type BidBarProps = {
   vehicle: VehicleViewModel;
@@ -17,9 +17,11 @@ export function BidBar({ vehicle, onBidClick }: BidBarProps) {
             <path d="M4 11 L9 7 L23 7 L28 11" stroke="white" strokeWidth="0.8" fill="none" />
           </svg>
         </div>
-        <span>Top bid <b>{formatCurrency(vehicle.topBid)}</b></span>
+        <span>
+          {vehicle.bidCount === 0 ? "Starting bid" : "Top bid"} <b>{formatCurrency(vehicle.topBid)}</b>
+        </span>
       </div>
-      <div className="bids-count">{vehicle.bidCount} Bids</div>
+      <div className="bids-count">{pluralize(vehicle.bidCount, "bid")}</div>
       <button className="btn-bid" type="button" onClick={onBidClick}>Bid</button>
     </div>
   );

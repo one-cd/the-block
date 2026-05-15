@@ -60,7 +60,10 @@ export function BidModal({ vehicle, onClose, onConfirm }: BidModalProps) {
           <VehicleImage vehicle={vehicle} className="pic" />
           <div className="meta">
             <div className="t">{vehicle.title}</div>
-            <div className="s">{formatOdometerKm(vehicle.odometerKm)} · Top bid {formatCurrency(vehicle.topBid)}</div>
+            <div className="s">
+              {formatOdometerKm(vehicle.odometerKm)} ·{" "}
+              {vehicle.bidCount === 0 ? "Starting bid" : "Top bid"} {formatCurrency(vehicle.topBid)}
+            </div>
           </div>
         </div>
 
