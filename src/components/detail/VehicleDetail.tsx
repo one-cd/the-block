@@ -33,7 +33,6 @@ export function VehicleDetail({ vehicle, onBack, onBid, isWatchlisted, onToggleW
         <div>
           <div className="detail-image">
             <VehicleImage vehicle={vehicle} className="detail-image-inner" imageIndex={selectedImage} />
-            <VisualBoostToggle />
           </div>
           <div className="thumbs-strip">
             {vehicle.images.slice(0, 3).map((image, index) => (
@@ -65,7 +64,6 @@ export function VehicleDetail({ vehicle, onBack, onBid, isWatchlisted, onToggleW
         <aside className="detail-right">
           <h1 className="dr-title">
             {vehicle.title}
-            <Icon.Ext size={18} color="#1652F0" />
           </h1>
           <div className="dr-row">
             <span className="strong">{formatOdometerKm(vehicle.odometerKm)}</span>
@@ -108,17 +106,6 @@ export function VehicleDetail({ vehicle, onBack, onBid, isWatchlisted, onToggleW
           onClose={() => setIsGalleryOpen(false)}
         />
       ) : null}
-    </div>
-  );
-}
-
-function VisualBoostToggle() {
-  return (
-    <div className="visual-boost">
-      <Icon.ArrowUp size={14} color="#1f2937" />
-      Visual boost AI
-      <span className="q">?</span>
-      <button className="toggle" type="button" aria-label="Visual boost AI" />
     </div>
   );
 }

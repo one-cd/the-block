@@ -110,45 +110,6 @@
   filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.2));
 }
 
-.visual-boost {
-  position: absolute;
-  top: 16px;
-  left: 16px;
-  background: var(--ol-white);
-  border-radius: var(--ol-radius-pill);
-  padding: 6px 14px 6px 10px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 14px;
-  font-weight: 500;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-}
-
-.visual-boost .q {
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  background: #2b2b2b;
-  color: white;
-  font-size: 11px;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.visual-boost .toggle {
-  width: 36px;
-  height: 20px;
-  margin-left: 4px;
-}
-
-.visual-boost .toggle::after {
-  width: 14px;
-  height: 14px;
-}
-
 .thumbs-strip {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
