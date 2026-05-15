@@ -1,9 +1,10 @@
+import { useEffect, useState } from "react";
 import type { VehicleViewModel } from "../../types/vehicle";
 import { formatOdometerKm, pluralize } from "../../utils/format";
 import { Icon } from "../icons/Icon";
 import { VehicleImage } from "../media/VehicleImage";
 import { BidBar } from "./BidBar";
-import { BlackBookCard, DealerCard, MarketDataCard, SpecChips, TransportCard, VehicleFacts } from "./DetailCards";
+import { DealerCard, MarketDataCard, SpecChips, TransportCard, VehicleFacts } from "./DetailCards";
 import { DetailTopBar } from "./DetailTopBar";
 import { TopNav } from "../layout/TopNav";
 
@@ -11,30 +12,52 @@ type VehicleDetailProps = {
   vehicle: VehicleViewModel;
   onBack: () => void;
   onBid: () => void;
+  isWatchlisted: boolean;
+  onToggleWatchlist: () => void;
 };
 
-export function VehicleDetail({ vehicle, onBack, onBid }: VehicleDetailProps) {
+export function VehicleDetail({ vehicle, onBack, onBid, isWatchlisted, onToggleWatchlist }: VehicleDetailProps) {
+  const [selectedImage, setSelectedImage] = useState(0);
+  const [isGalleryOpen, setIsGalleryOpen] = useState(false);
+
   return (
     <div>
       <TopNav />
-      <DetailTopBar endsIn={vehicle.countdown} onBack={onBack} />
+      <DetailTopBar
+        endsIn={vehicle.countdown}
+        isWatchlisted={isWatchlisted}
+        onBack={onBack}
+        onToggleWatchlist={onToggleWatchlist}
+      />
       <div className="detail-wrap">
         <div>
           <div className="detail-image">
-            <VehicleImage vehicle={vehicle} className="detail-image-inner" />
+            <VehicleImage vehicle={vehicle} className="detail-image-inner" imageIndex={selectedImage} />
             <VisualBoostToggle />
-            <ImageSlider />
           </div>
           <div className="thumbs-strip">
             {vehicle.images.slice(0, 3).map((image, index) => (
-              <div key={`${image}-${index}`} className="thumb">
+              <button
+                key={`${image}-${index}`}
+                className={`thumb${selectedImage === index ? " is-active" : ""}`}
+                type="button"
+                onClick={() => {
+                  if (index === 2 && vehicle.images.length > 3) {
+                    setSelectedImage(index);
+                    setIsGalleryOpen(true);
+                  } else {
+                    setSelectedImage(index);
+                  }
+                }}
+                aria-label={index === 2 && vehicle.images.length > 3 ? "Open image gallery" : `Show image ${index + 1}`}
+              >
                 <VehicleImage vehicle={vehicle} imageIndex={index} className="thumb-inner" />
                 {index === 2 && vehicle.images.length > 3 ? (
                   <div className="more-overlay">
                     <span>+{vehicle.images.length - 2} more</span>
                   </div>
                 ) : null}
-              </div>
+              </button>
             ))}
           </div>
         </div>
@@ -71,13 +94,20 @@ export function VehicleDetail({ vehicle, onBack, onBid }: VehicleDetailProps) {
 
           <SpecChips vehicle={vehicle} />
           <VehicleFacts vehicle={vehicle} />
-          <BlackBookCard vehicle={vehicle} />
           <MarketDataCard vehicle={vehicle} />
           <TransportCard vehicle={vehicle} />
           <DealerCard vehicle={vehicle} />
         </aside>
       </div>
       <BidBar vehicle={vehicle} onBidClick={onBid} />
+      {isGalleryOpen ? (
+        <ImageGalleryModal
+          vehicle={vehicle}
+          selectedImage={selectedImage}
+          onSelectImage={setSelectedImage}
+          onClose={() => setIsGalleryOpen(false)}
+        />
+      ) : null}
     </div>
   );
 }
@@ -93,11 +123,58 @@ function VisualBoostToggle() {
   );
 }
 
-function ImageSlider() {
+function ImageGalleryModal({
+  vehicle,
+  selectedImage,
+  onSelectImage,
+  onClose,
+}: {
+  vehicle: VehicleViewModel;
+  selectedImage: number;
+  onSelectImage: (index: number) => void;
+  onClose: () => void;
+}) {
+  useEffect(() => {
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        onClose();
+      }
+    };
+
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [onClose]);
+
   return (
-    <div className="image-slider">
-      <div className="slot">
-        <div className="knob" />
+    <div className="modal-backdrop" onMouseDown={(event) => {
+      if (event.target === event.currentTarget) {
+        onClose();
+      }
+    }}>
+      <div className="modal gallery-modal" role="dialog" aria-label="Vehicle image gallery" aria-modal="true">
+        <div className="modal-head">
+          <div>
+            <h2 className="modal-title">Vehicle images</h2>
+            <div className="gallery-count">{selectedImage + 1} of {vehicle.images.length}</div>
+          </div>
+          <button className="modal-close" type="button" onClick={onClose} aria-label="Close image gallery">
+            <Icon.Cross size={20} />
+          </button>
+        </div>
+        <VehicleImage vehicle={vehicle} imageIndex={selectedImage} className="gallery-main" />
+        <div className="gallery-grid">
+          {vehicle.images.map((image, index) => (
+            <button
+              key={`${image}-${index}`}
+              className={`gallery-thumb${selectedImage === index ? " is-active" : ""}`}
+              type="button"
+              onClick={() => onSelectImage(index)}
+              aria-label={`Show image ${index + 1}`}
+            >
+              <VehicleImage vehicle={vehicle} imageIndex={index} className="gallery-thumb-inner" />
+            </button>
+          ))}
+        </div>
       </div>
     </div>
   );

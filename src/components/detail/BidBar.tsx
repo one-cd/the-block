@@ -9,7 +9,10 @@ type BidBarProps = {
 export function BidBar({ vehicle, onBidClick }: BidBarProps) {
   return (
     <div className="bid-bar">
-      {vehicle.isAbsolute ? <div className="absolute-pill">Absolute sale</div> : <div className="absolute-pill reserve-pill">Reserve sale</div>}
+      <div className="auction-state-pills">
+        {vehicle.buyNowPrice != null ? <span className="auction-state-pill buy-now">Buy now {formatCurrency(vehicle.buyNowPrice)}</span> : null}
+        <span className={`auction-state-pill${vehicle.bidCount > 0 ? " active" : ""}`}>{vehicle.statusLabel}</span>
+      </div>
       <div className="top-bid">
         <div className="dealer-mini">
           <svg width="32" height="20" viewBox="0 0 32 20" aria-hidden="true">

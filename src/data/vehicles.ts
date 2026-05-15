@@ -1,5 +1,5 @@
 import rawVehicles from "../../data/vehicles.json";
-import type { BrowserSession, MarketSummary, VehicleRaw, VehicleViewModel } from "../types/vehicle";
+import type { BrowserSession, MarketComparable, MarketSummary, VehicleRaw, VehicleViewModel } from "../types/vehicle";
 import { formatAuctionDate, formatCountdown, formatTimeLeft, normalizeAuctionDates } from "../utils/auctionTime";
 import { titleCase } from "../utils/format";
 
@@ -126,6 +126,27 @@ function createMarketSummary(vehicle: VehicleRaw): MarketSummary {
     average,
     high,
     similarCount: comparable.length,
+    comparables: comparable.slice(0, 8).map(createMarketComparable),
+  };
+}
+
+function createMarketComparable(vehicle: VehicleRaw): MarketComparable {
+  const title = [vehicle.year, vehicle.make, vehicle.model, vehicle.trim].filter(Boolean).join(" ");
+  const prices = [vehicle.current_bid, vehicle.starting_bid, vehicle.reserve_price, vehicle.buy_now_price].filter(
+    (value): value is number => typeof value === "number" && value > 0,
+  );
+
+  return {
+    id: vehicle.id,
+    title,
+    year: vehicle.year,
+    bodyStyle: titleCase(vehicle.body_style),
+    location: `${vehicle.city}, ${vehicle.province}`,
+    odometerKm: vehicle.odometer_km,
+    conditionGrade: vehicle.condition_grade,
+    titleStatus: vehicle.title_status,
+    topPrice: Math.max(...prices),
+    buyNowPrice: vehicle.buy_now_price,
   };
 }
 

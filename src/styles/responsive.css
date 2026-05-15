@@ -31,6 +31,7 @@
   .filterbar,
   .results-bar,
   .subnav,
+  .advanced-filters,
   .detail-top {
     padding-left: 16px;
     padding-right: 16px;
@@ -140,10 +141,6 @@
     font-size: 20px;
   }
 
-  .image-slider {
-    width: 160px;
-  }
-
   .visual-boost {
     max-width: calc(100% - 32px);
   }
@@ -184,8 +181,17 @@
     flex-wrap: wrap;
   }
 
-  .bid-bar .absolute-pill {
+  .auction-state-pills {
     margin-left: 0;
+  }
+
+  .market-modal-summary,
+  .market-row {
+    grid-template-columns: 1fr;
+  }
+
+  .market-row-price {
+    text-align: left;
   }
 
   .bid-bar .btn-bid {
