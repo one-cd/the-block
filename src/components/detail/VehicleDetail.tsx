@@ -1,5 +1,5 @@
 import type { VehicleViewModel } from "../../types/vehicle";
-import { formatOdometerKm } from "../../utils/format";
+import { formatOdometerKm, pluralize } from "../../utils/format";
 import { Icon } from "../icons/Icon";
 import { VehicleImage } from "../media/VehicleImage";
 import { BidBar } from "./BidBar";
@@ -58,10 +58,12 @@ export function VehicleDetail({ vehicle, onBack, onBid }: VehicleDetailProps) {
             <Icon.Cal size={16} color="#374151" />
             Auction on {vehicle.auctionLabel}
           </div>
-          <div className="dr-line">
-            <Icon.Flame size={16} color="#ef4444" />
-            <span className="red">{Math.max(vehicle.bidCount, vehicle.damageNotes.length + 1)} interested</span>
-          </div>
+          {vehicle.bidCount > 0 ? (
+            <div className="dr-line">
+              <Icon.Flame size={16} color="#ef4444" />
+              <span className="red">{pluralize(vehicle.bidCount, "bid")} placed</span>
+            </div>
+          ) : null}
           <div className="dr-line">
             <Icon.Shield size={18} color="#1f2937" />
             As Described Guarantee {vehicle.titleStatus === "clean" ? "available" : "review recommended"}
