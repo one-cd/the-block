@@ -1,17 +1,20 @@
-import { useMemo, useState, useTransition } from "react";
+import { useEffect, useMemo, useState, useTransition } from "react";
 import type { VehicleViewModel } from "../../types/vehicle";
 import { filterVehicles } from "../../data/vehicles";
 import { titleCase } from "../../utils/format";
 import { SubNav } from "../layout/SubNav";
 import { TopNav } from "../layout/TopNav";
+import { ActiveFilterChips } from "./ActiveFilterChips";
 import { FilterBar } from "./FilterBar";
 import { ResultsBar } from "./ResultsBar";
 import { VehicleCard } from "./VehicleCard";
 import {
-  EMPTY_FILTERS,
+  createEmptyFilters,
+  isRangeNarrowed,
+  type DatasetBounds,
   type FilterOptions,
   type InventoryFilters,
-  type SavedSearch,
+  type Range,
   type SortKey,
 } from "./inventoryControls";
 
@@ -25,13 +28,20 @@ type InventoryPageProps = {
 export function InventoryPage({ vehicles, onOpenVehicle, hasBid, isWatchlisted }: InventoryPageProps) {
   const [tab, setTab] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
-  const [filters, setFilters] = useState<InventoryFilters>(EMPTY_FILTERS);
+  const bounds = useMemo(() => createDatasetBounds(vehicles), [vehicles]);
+  const emptyFilters = useMemo(() => createEmptyFilters(bounds), [bounds]);
+  const [filters, setFilters] = useState<InventoryFilters>(emptyFilters);
   const [isFiltersExpanded, setIsFiltersExpanded] = useState(false);
   const [sort, setSort] = useState<SortKey>("mileage");
   const [view, setView] = useState<"grid" | "list">("grid");
   const [, startTransition] = useTransition();
   const filterOptions = useMemo(() => createFilterOptions(vehicles), [vehicles]);
-  const activeFilterCount = useMemo(() => countActiveFilters(filters), [filters]);
+  const activeFilterCount = useMemo(() => countActiveFilters(filters, bounds), [filters, bounds]);
+
+  useEffect(() => {
+    document.body.classList.toggle("filters-drawer-open", isFiltersExpanded);
+    return () => document.body.classList.remove("filters-drawer-open");
+  }, [isFiltersExpanded]);
 
   const filteredVehicles = useMemo(() => {
     let result = filterVehicles(vehicles, searchTerm).filter((vehicle) => matchesFilters(vehicle, filters));
@@ -54,19 +64,32 @@ export function InventoryPage({ vehicles, onOpenVehicle, hasBid, isWatchlisted }
     setFilters((current) => ({ ...current, [key]: value }));
   };
 
-  const handleSavedSearchChange = (savedSearch: SavedSearch) => {
-    if (!savedSearch) {
-      return;
-    }
-
-    setSearchTerm("");
-    setFilters(createSavedSearchFilters(savedSearch));
-    setIsFiltersExpanded(savedSearch !== "buy-now" && savedSearch !== "active-bidding" && savedSearch !== "awaiting-bids");
-  };
-
   const clearFilters = () => {
     setSearchTerm("");
-    setFilters(EMPTY_FILTERS);
+    setFilters(emptyFilters);
+  };
+
+  const handleRemoveValue = <Key extends keyof InventoryFilters>(key: Key, value: string) => {
+    setFilters((current) => {
+      const currentValue = current[key];
+      if (Array.isArray(currentValue)) {
+        const next = (currentValue as readonly string[]).filter((entry) => entry !== value);
+        return { ...current, [key]: next as InventoryFilters[Key] };
+      }
+      return current;
+    });
+  };
+
+  const handleResetRange = (key: "mileageRange" | "yearRange" | "conditionRange") => {
+    setFilters((current) => {
+      if (key === "mileageRange") {
+        return { ...current, mileageRange: { ...bounds.mileage } };
+      }
+      if (key === "yearRange") {
+        return { ...current, yearRange: { ...bounds.year } };
+      }
+      return { ...current, conditionRange: { ...bounds.condition } };
+    });
   };
 
   return (
@@ -77,13 +100,23 @@ export function InventoryPage({ vehicles, onOpenVehicle, hasBid, isWatchlisted }
         searchTerm={searchTerm}
         filters={filters}
         options={filterOptions}
+        bounds={bounds}
         activeFilterCount={activeFilterCount}
         isExpanded={isFiltersExpanded}
         onSearchChange={handleSearchChange}
         onFilterChange={handleFilterChange}
-        onSavedSearchChange={handleSavedSearchChange}
         onClearFilters={clearFilters}
         onExpandedChange={setIsFiltersExpanded}
+      />
+      <ActiveFilterChips
+        filters={filters}
+        bounds={bounds}
+        searchTerm={searchTerm}
+        onRemoveValue={handleRemoveValue}
+        onResetRange={handleResetRange}
+        onClearDamage={() => handleFilterChange("damage", "any")}
+        onClearSearch={() => setSearchTerm("")}
+        onClearAll={clearFilters}
       />
       <ResultsBar count={filteredVehicles.length} view={view} sort={sort} onViewChange={setView} onSortChange={setSort} />
       {filteredVehicles.length === 0 ? (
@@ -112,7 +145,7 @@ function emptyMessage(searchTerm: string, tab: string): string {
     return "Your watchlist is empty. Open a vehicle and add it to your watchlist to see it here.";
   }
 
-  return "No vehicles match your filters. Try clearing filters or choosing a different saved search.";
+  return "No vehicles match your filters. Try clearing or adjusting the filters above.";
 }
 
 function createFilterOptions(vehicles: VehicleViewModel[]): FilterOptions {
@@ -130,90 +163,91 @@ function createFilterOptions(vehicles: VehicleViewModel[]): FilterOptions {
   };
 }
 
+function createDatasetBounds(vehicles: VehicleViewModel[]): DatasetBounds {
+  if (vehicles.length === 0) {
+    return {
+      mileage: { min: 0, max: 250_000 },
+      year: { min: 2016, max: new Date().getFullYear() },
+      condition: { min: 1, max: 5 },
+    };
+  }
+
+  const mileages = vehicles.map((vehicle) => vehicle.odometerKm);
+  const years = vehicles.map((vehicle) => vehicle.year);
+  const grades = vehicles.map((vehicle) => vehicle.conditionGrade);
+
+  return {
+    mileage: {
+      min: Math.floor(Math.min(...mileages) / 1000) * 1000,
+      max: Math.ceil(Math.max(...mileages) / 1000) * 1000,
+    },
+    year: {
+      min: Math.min(...years),
+      max: Math.max(...years),
+    },
+    condition: {
+      min: roundCondition(Math.min(...grades), Math.floor),
+      max: roundCondition(Math.max(...grades), Math.ceil),
+    },
+  };
+}
+
+function roundCondition(value: number, fn: (n: number) => number): number {
+  return Math.max(0, Math.min(5, fn(value * 10) / 10));
+}
+
 function uniqueSorted(values: string[]): string[] {
   return Array.from(new Set(values)).sort((a, b) => a.localeCompare(b));
 }
 
 function matchesFilters(vehicle: VehicleViewModel, filters: InventoryFilters): boolean {
-  if (filters.makeModel && vehicle.make !== filters.makeModel && `${vehicle.make} ${vehicle.model}` !== filters.makeModel) {
+  if (filters.makeModels.length > 0 && !matchesMakeModel(vehicle, filters.makeModels)) {
     return false;
   }
-  if (filters.bodyStyle && vehicle.bodyStyle !== filters.bodyStyle) {
+  if (filters.bodyStyles.length > 0 && !filters.bodyStyles.includes(vehicle.bodyStyle)) {
     return false;
   }
-  if (filters.fuelType && vehicle.fuelType !== filters.fuelType) {
+  if (filters.fuelTypes.length > 0 && !filters.fuelTypes.includes(vehicle.fuelType)) {
     return false;
   }
-  if (filters.drivetrain && vehicle.drivetrain !== filters.drivetrain) {
+  if (filters.drivetrains.length > 0 && !filters.drivetrains.includes(vehicle.drivetrain)) {
     return false;
   }
-  if (filters.transmission && vehicle.transmission !== filters.transmission) {
+  if (filters.transmissions.length > 0 && !filters.transmissions.includes(vehicle.transmission)) {
     return false;
   }
-  if (filters.titleStatus && titleCase(vehicle.titleStatus) !== filters.titleStatus) {
+  if (filters.titleStatuses.length > 0 && !filters.titleStatuses.includes(titleCase(vehicle.titleStatus))) {
     return false;
   }
-  if (filters.province && vehicle.province !== filters.province) {
+  if (filters.provinces.length > 0 && !filters.provinces.includes(vehicle.province)) {
     return false;
   }
-  if (!matchesMileage(vehicle, filters.mileage)) {
+  if (filters.auctionStates.length > 0 && !matchesAuctionStates(vehicle, filters.auctionStates)) {
     return false;
   }
-  if (!matchesYear(vehicle, filters.year)) {
+  if (!matchesRange(vehicle.odometerKm, filters.mileageRange)) {
     return false;
   }
-  if (!matchesCondition(vehicle, filters.condition)) {
+  if (!matchesRange(vehicle.year, filters.yearRange)) {
+    return false;
+  }
+  if (!matchesRange(vehicle.conditionGrade, filters.conditionRange)) {
     return false;
   }
   if (!matchesDamage(vehicle, filters.damage)) {
-    return false;
-  }
-  if (!matchesAuctionState(vehicle, filters.auctionState)) {
     return false;
   }
 
   return true;
 }
 
-function matchesMileage(vehicle: VehicleViewModel, mileage: InventoryFilters["mileage"]): boolean {
-  switch (mileage) {
-    case "under-50k":
-      return vehicle.odometerKm < 50_000;
-    case "50k-100k":
-      return vehicle.odometerKm >= 50_000 && vehicle.odometerKm < 100_000;
-    case "100k-150k":
-      return vehicle.odometerKm >= 100_000 && vehicle.odometerKm < 150_000;
-    case "150k-plus":
-      return vehicle.odometerKm >= 150_000;
-    default:
-      return true;
-  }
+function matchesMakeModel(vehicle: VehicleViewModel, makeModels: readonly string[]): boolean {
+  const candidates = new Set([vehicle.make, `${vehicle.make} ${vehicle.model}`]);
+  return makeModels.some((entry) => candidates.has(entry));
 }
 
-function matchesYear(vehicle: VehicleViewModel, year: InventoryFilters["year"]): boolean {
-  switch (year) {
-    case "2024-plus":
-      return vehicle.year >= 2024;
-    case "2020-2023":
-      return vehicle.year >= 2020 && vehicle.year <= 2023;
-    case "2016-2019":
-      return vehicle.year >= 2016 && vehicle.year <= 2019;
-    default:
-      return true;
-  }
-}
-
-function matchesCondition(vehicle: VehicleViewModel, condition: InventoryFilters["condition"]): boolean {
-  switch (condition) {
-    case "4-plus":
-      return vehicle.conditionGrade >= 4;
-    case "3-4":
-      return vehicle.conditionGrade >= 3 && vehicle.conditionGrade < 4;
-    case "under-3":
-      return vehicle.conditionGrade < 3;
-    default:
-      return true;
-  }
+function matchesRange(value: number, range: Range): boolean {
+  return value >= range.min && value <= range.max;
 }
 
 function matchesDamage(vehicle: VehicleViewModel, damage: InventoryFilters["damage"]): boolean {
@@ -227,17 +261,19 @@ function matchesDamage(vehicle: VehicleViewModel, damage: InventoryFilters["dama
   }
 }
 
-function matchesAuctionState(vehicle: VehicleViewModel, auctionState: InventoryFilters["auctionState"]): boolean {
-  switch (auctionState) {
-    case "buy-now":
-      return vehicle.buyNowPrice != null;
-    case "active-bidding":
-      return vehicle.bidCount > 0;
-    case "awaiting-bids":
-      return vehicle.bidCount === 0;
-    default:
-      return true;
-  }
+function matchesAuctionStates(vehicle: VehicleViewModel, states: readonly InventoryFilters["auctionStates"][number][]): boolean {
+  return states.some((state) => {
+    switch (state) {
+      case "buy-now":
+        return vehicle.buyNowPrice != null;
+      case "active-bidding":
+        return vehicle.bidCount > 0;
+      case "awaiting-bids":
+        return vehicle.bidCount === 0;
+      default:
+        return false;
+    }
+  });
 }
 
 function sortVehicles(vehicles: VehicleViewModel[], sort: SortKey): VehicleViewModel[] {
@@ -260,25 +296,27 @@ function priceOrLast(value: number | null): number {
   return value ?? Number.MAX_SAFE_INTEGER;
 }
 
-function countActiveFilters(filters: InventoryFilters): number {
-  return Object.values(filters).filter((value) => value !== "" && value !== "any").length;
-}
-
-function createSavedSearchFilters(savedSearch: SavedSearch): InventoryFilters {
-  switch (savedSearch) {
-    case "buy-now":
-      return { ...EMPTY_FILTERS, auctionState: "buy-now" };
-    case "awaiting-bids":
-      return { ...EMPTY_FILTERS, auctionState: "awaiting-bids" };
-    case "active-bidding":
-      return { ...EMPTY_FILTERS, auctionState: "active-bidding" };
-    case "clean-no-damage":
-      return { ...EMPTY_FILTERS, titleStatus: "Clean", damage: "none" };
-    case "low-mileage":
-      return { ...EMPTY_FILTERS, mileage: "under-50k" };
-    case "newer":
-      return { ...EMPTY_FILTERS, year: "2024-plus" };
-    default:
-      return EMPTY_FILTERS;
+function countActiveFilters(filters: InventoryFilters, bounds: DatasetBounds): number {
+  let count = 0;
+  count += filters.makeModels.length;
+  count += filters.bodyStyles.length;
+  count += filters.fuelTypes.length;
+  count += filters.drivetrains.length;
+  count += filters.transmissions.length;
+  count += filters.titleStatuses.length;
+  count += filters.provinces.length;
+  count += filters.auctionStates.length;
+  if (isRangeNarrowed(filters.mileageRange, bounds.mileage)) {
+    count += 1;
   }
+  if (isRangeNarrowed(filters.yearRange, bounds.year)) {
+    count += 1;
+  }
+  if (isRangeNarrowed(filters.conditionRange, bounds.condition)) {
+    count += 1;
+  }
+  if (filters.damage !== "any") {
+    count += 1;
+  }
+  return count;
 }

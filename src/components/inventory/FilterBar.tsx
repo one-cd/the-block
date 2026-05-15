@@ -1,25 +1,26 @@
+import { useEffect } from "react";
 import { Icon } from "../icons/Icon";
+import { MultiSelectPill, type MultiSelectOption } from "./MultiSelectPill";
+import { RangeSliderPill } from "./RangeSliderPill";
+import { formatKm } from "./ActiveFilterChips";
 import {
   AUCTION_STATE_OPTIONS,
-  CONDITION_OPTIONS,
   DAMAGE_OPTIONS,
-  MILEAGE_OPTIONS,
-  SAVED_SEARCH_OPTIONS,
-  YEAR_OPTIONS,
+  type DatasetBounds,
   type FilterOptions,
   type InventoryFilters,
-  type SavedSearch,
+  type Range,
 } from "./inventoryControls";
 
 type FilterBarProps = {
   searchTerm: string;
   filters: InventoryFilters;
   options: FilterOptions;
+  bounds: DatasetBounds;
   activeFilterCount: number;
   isExpanded: boolean;
   onSearchChange: (value: string) => void;
   onFilterChange: <Key extends keyof InventoryFilters>(key: Key, value: InventoryFilters[Key]) => void;
-  onSavedSearchChange: (value: SavedSearch) => void;
   onClearFilters: () => void;
   onExpandedChange: (value: boolean) => void;
 };
@@ -28,14 +29,29 @@ export function FilterBar({
   searchTerm,
   filters,
   options,
+  bounds,
   activeFilterCount,
   isExpanded,
   onSearchChange,
   onFilterChange,
-  onSavedSearchChange,
   onClearFilters,
   onExpandedChange,
 }: FilterBarProps) {
+  useEffect(() => {
+    if (!isExpanded) {
+      return;
+    }
+    const handleKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        onExpandedChange(false);
+      }
+    };
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, [isExpanded, onExpandedChange]);
+
+  const hasAny = activeFilterCount > 0 || searchTerm.trim().length > 0;
+
   return (
     <div className="filterbar-wrap">
       <div className="filterbar">
@@ -48,40 +64,48 @@ export function FilterBar({
             aria-label="Search inventory"
           />
         </label>
-        <SelectPill
-          ariaLabel="Saved searches"
-          value=""
-          options={SAVED_SEARCH_OPTIONS}
-          onChange={(value) => onSavedSearchChange(value as SavedSearch)}
+
+        <MultiSelectPill
+          label="Make/model"
+          options={toLabelOptions(options.makeModels)}
+          selected={filters.makeModels}
+          searchable
+          searchPlaceholder="Search make or model"
+          onChange={(next) => onFilterChange("makeModels", next)}
         />
-        <SelectPill
-          ariaLabel="Mileage"
-          value={filters.mileage}
-          options={MILEAGE_OPTIONS}
-          onChange={(value) => onFilterChange("mileage", value as InventoryFilters["mileage"])}
+
+        <RangeSliderPill
+          label="Mileage"
+          bounds={bounds.mileage}
+          step={1000}
+          value={filters.mileageRange}
+          formatValue={formatKm}
+          formatSummary={(value, bounds) => `Mileage ${formatMileageSummary(value, bounds)}`}
+          onChange={(next) => onFilterChange("mileageRange", next)}
         />
-        <SelectPill
-          ariaLabel="Year"
-          value={filters.year}
-          options={YEAR_OPTIONS}
-          onChange={(value) => onFilterChange("year", value as InventoryFilters["year"])}
+
+        <RangeSliderPill
+          label="Year"
+          bounds={bounds.year}
+          step={1}
+          value={filters.yearRange}
+          formatValue={(value) => `${value}`}
+          formatSummary={(value, bounds) => `Year ${formatYearSummary(value, bounds)}`}
+          onChange={(next) => onFilterChange("yearRange", next)}
         />
-        <SelectPill
-          ariaLabel="Make/model"
-          value={filters.makeModel}
-          options={[{ value: "", label: "Any make/model" }, ...options.makeModels.map((makeModel) => ({ value: makeModel, label: makeModel }))]}
-          onChange={(value) => onFilterChange("makeModel", value)}
-        />
+
         <button
           className={`pill-select filter-with-icon${isExpanded ? " is-active" : ""}`}
           type="button"
           onClick={() => onExpandedChange(!isExpanded)}
           aria-expanded={isExpanded}
+          aria-haspopup="dialog"
         >
-          <Icon.Filter size={15} color="#374151" />
+          <Icon.Filter size={15} color={isExpanded ? "currentColor" : "#374151"} />
           All filters{activeFilterCount > 0 ? ` (${activeFilterCount})` : ""}
         </button>
-        {(activeFilterCount > 0 || searchTerm.trim()) ? (
+
+        {hasAny ? (
           <button className="clear-filters" type="button" onClick={onClearFilters}>
             Clear
           </button>
@@ -89,85 +113,155 @@ export function FilterBar({
       </div>
 
       {isExpanded ? (
-        <div className="advanced-filters" aria-label="All filters">
-          <SelectPill
-            ariaLabel="Auction state"
-            value={filters.auctionState}
-            options={AUCTION_STATE_OPTIONS}
-            onChange={(value) => onFilterChange("auctionState", value as InventoryFilters["auctionState"])}
+        <>
+          <div
+            className="filters-drawer-backdrop"
+            onClick={() => onExpandedChange(false)}
+            aria-hidden="true"
           />
-          <SelectPill
-            ariaLabel="Body style"
-            value={filters.bodyStyle}
-            options={[{ value: "", label: "Any body style" }, ...options.bodyStyles.map((bodyStyle) => ({ value: bodyStyle, label: bodyStyle }))]}
-            onChange={(value) => onFilterChange("bodyStyle", value)}
-          />
-          <SelectPill
-            ariaLabel="Fuel type"
-            value={filters.fuelType}
-            options={[{ value: "", label: "Any fuel type" }, ...options.fuelTypes.map((fuelType) => ({ value: fuelType, label: fuelType }))]}
-            onChange={(value) => onFilterChange("fuelType", value)}
-          />
-          <SelectPill
-            ariaLabel="Drivetrain"
-            value={filters.drivetrain}
-            options={[{ value: "", label: "Any drivetrain" }, ...options.drivetrains.map((drivetrain) => ({ value: drivetrain, label: drivetrain }))]}
-            onChange={(value) => onFilterChange("drivetrain", value)}
-          />
-          <SelectPill
-            ariaLabel="Transmission"
-            value={filters.transmission}
-            options={[{ value: "", label: "Any transmission" }, ...options.transmissions.map((transmission) => ({ value: transmission, label: transmission }))]}
-            onChange={(value) => onFilterChange("transmission", value)}
-          />
-          <SelectPill
-            ariaLabel="Title status"
-            value={filters.titleStatus}
-            options={[{ value: "", label: "Any title status" }, ...options.titleStatuses.map((titleStatus) => ({ value: titleStatus, label: titleStatus }))]}
-            onChange={(value) => onFilterChange("titleStatus", value)}
-          />
-          <SelectPill
-            ariaLabel="Condition grade"
-            value={filters.condition}
-            options={CONDITION_OPTIONS}
-            onChange={(value) => onFilterChange("condition", value as InventoryFilters["condition"])}
-          />
-          <SelectPill
-            ariaLabel="Damage"
-            value={filters.damage}
-            options={DAMAGE_OPTIONS}
-            onChange={(value) => onFilterChange("damage", value as InventoryFilters["damage"])}
-          />
-          <SelectPill
-            ariaLabel="Province"
-            value={filters.province}
-            options={[{ value: "", label: "Any province" }, ...options.provinces.map((province) => ({ value: province, label: province }))]}
-            onChange={(value) => onFilterChange("province", value)}
-          />
-        </div>
+          <div className="advanced-filters" role="dialog" aria-label="All filters">
+            <div className="advanced-filters-head">
+              <strong>All filters</strong>
+              <button
+                type="button"
+                className="advanced-filters-close"
+                onClick={() => onExpandedChange(false)}
+                aria-label="Close all filters"
+              >
+                <Icon.Cross size={18} color="currentColor" />
+              </button>
+            </div>
+
+            <div className="advanced-filters-list">
+              <MultiSelectPill
+                label="Auction state"
+                options={[...AUCTION_STATE_OPTIONS]}
+                selected={filters.auctionStates}
+                onChange={(next) => onFilterChange("auctionStates", next as InventoryFilters["auctionStates"])}
+              />
+              <MultiSelectPill
+                label="Body style"
+                options={toLabelOptions(options.bodyStyles)}
+                selected={filters.bodyStyles}
+                onChange={(next) => onFilterChange("bodyStyles", next)}
+              />
+              <MultiSelectPill
+                label="Fuel type"
+                options={toLabelOptions(options.fuelTypes)}
+                selected={filters.fuelTypes}
+                onChange={(next) => onFilterChange("fuelTypes", next)}
+              />
+              <MultiSelectPill
+                label="Drivetrain"
+                options={toLabelOptions(options.drivetrains)}
+                selected={filters.drivetrains}
+                onChange={(next) => onFilterChange("drivetrains", next)}
+              />
+              <MultiSelectPill
+                label="Transmission"
+                options={toLabelOptions(options.transmissions)}
+                selected={filters.transmissions}
+                onChange={(next) => onFilterChange("transmissions", next)}
+              />
+              <MultiSelectPill
+                label="Title status"
+                options={toLabelOptions(options.titleStatuses)}
+                selected={filters.titleStatuses}
+                onChange={(next) => onFilterChange("titleStatuses", next)}
+              />
+              <MultiSelectPill
+                label="Province"
+                options={toLabelOptions(options.provinces)}
+                selected={filters.provinces}
+                searchable
+                searchPlaceholder="Search province"
+                onChange={(next) => onFilterChange("provinces", next)}
+              />
+              <RangeSliderPill
+                label="Condition grade"
+                bounds={bounds.condition}
+                step={0.1}
+                value={filters.conditionRange}
+                formatValue={(value) => value.toFixed(1)}
+                formatSummary={(value, bounds) => `Grade ${formatConditionSummary(value, bounds)}`}
+                onChange={(next) => onFilterChange("conditionRange", next)}
+              />
+              <DamageSelect value={filters.damage} onChange={(next) => onFilterChange("damage", next)} />
+            </div>
+
+            <div className="advanced-filters-foot">
+              <button type="button" className="ms-pop-clear" onClick={onClearFilters}>
+                Clear all
+              </button>
+              <button type="button" className="ms-pop-done" onClick={() => onExpandedChange(false)}>
+                Done
+              </button>
+            </div>
+          </div>
+        </>
       ) : null}
     </div>
   );
 }
 
-type SelectOption = {
-  value: string;
-  label: string;
+function toLabelOptions(values: readonly string[]): MultiSelectOption[] {
+  return values.map((value) => ({ value, label: value }));
+}
+
+function formatMileageSummary(value: Range, bounds: Range): string {
+  const minAt = value.min === bounds.min;
+  const maxAt = value.max === bounds.max;
+  if (minAt && !maxAt) {
+    return `under ${formatKm(value.max)}`;
+  }
+  if (!minAt && maxAt) {
+    return `${formatKm(value.min)}+`;
+  }
+  return `${formatKm(value.min)}–${formatKm(value.max)}`;
+}
+
+function formatYearSummary(value: Range, bounds: Range): string {
+  const minAt = value.min === bounds.min;
+  const maxAt = value.max === bounds.max;
+  if (value.min === value.max) {
+    return `${value.min}`;
+  }
+  if (minAt && !maxAt) {
+    return `${value.max} and older`;
+  }
+  if (!minAt && maxAt) {
+    return `${value.min}+`;
+  }
+  return `${value.min}–${value.max}`;
+}
+
+function formatConditionSummary(value: Range, bounds: Range): string {
+  const minAt = value.min === bounds.min;
+  const maxAt = value.max === bounds.max;
+  if (minAt && !maxAt) {
+    return `≤ ${value.max.toFixed(1)}`;
+  }
+  if (!minAt && maxAt) {
+    return `≥ ${value.min.toFixed(1)}`;
+  }
+  return `${value.min.toFixed(1)}–${value.max.toFixed(1)}`;
+}
+
+type DamageSelectProps = {
+  value: InventoryFilters["damage"];
+  onChange: (value: InventoryFilters["damage"]) => void;
 };
 
-type SelectPillProps = {
-  ariaLabel: string;
-  value: string;
-  options: readonly SelectOption[];
-  onChange: (value: string) => void;
-};
-
-function SelectPill({ ariaLabel, value, options, onChange }: SelectPillProps) {
+function DamageSelect({ value, onChange }: DamageSelectProps) {
   return (
     <label className="select-pill">
-      <select value={value} onChange={(event) => onChange(event.target.value)} aria-label={ariaLabel}>
-        {options.map((option) => (
-          <option key={`${ariaLabel}-${option.value}`} value={option.value}>
+      <select
+        value={value}
+        onChange={(event) => onChange(event.target.value as InventoryFilters["damage"])}
+        aria-label="Damage"
+      >
+        {DAMAGE_OPTIONS.map((option) => (
+          <option key={`damage-${option.value}`} value={option.value}>
             {option.label}
           </option>
         ))}
