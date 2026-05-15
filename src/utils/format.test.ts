@@ -14,4 +14,10 @@ describe("format utilities", () => {
     expect(titleCase("single_speed")).toBe("Single Speed");
     expect(titleCase("clean title")).toBe("Clean Title");
   });
+
+  it("preserves all-caps acronyms instead of lowercasing them", () => {
+    expect(titleCase("SUV")).toBe("SUV");
+    expect(titleCase("CVT")).toBe("CVT");
+    expect(titleCase("4WD")).toBe("4WD");
+  });
 });
