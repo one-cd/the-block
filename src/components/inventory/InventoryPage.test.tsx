@@ -20,14 +20,19 @@ function renderInventory() {
   return { ...utils, vehicles, onOpenVehicle };
 }
 
+function getFilterButton(container: HTMLElement, name: RegExp) {
+  const filterbar = container.querySelector(".filterbar");
+  expect(filterbar).not.toBeNull();
+  return within(filterbar as HTMLElement).getByRole("button", { name });
+}
+
 describe("InventoryPage", () => {
   it("renders dataset vehicles and filters results from the search field", async () => {
-    const user = userEvent.setup();
     const { container } = renderInventory();
 
     expect(container.querySelectorAll(".vcard")).toHaveLength(vehiclesRaw.length);
 
-    await user.type(screen.getByLabelText("Search inventory"), "Tesla");
+    fireEvent.change(screen.getByLabelText("Search inventory"), { target: { value: "Tesla" } });
 
     await waitFor(() => {
       expect(container.querySelectorAll(".vcard")).toHaveLength(9);
@@ -51,21 +56,21 @@ describe("InventoryPage", () => {
     const user = userEvent.setup();
     const { container } = renderInventory();
 
-    await user.click(screen.getByRole("button", { name: /Make\/model/ }));
+    await user.click(getFilterButton(container, /Make\/model/));
     const dialog = await screen.findByRole("dialog", { name: /Make\/model filter/ });
 
     await user.click(within(dialog).getByRole("option", { name: "Tesla" }));
     await user.click(within(dialog).getByRole("option", { name: "Honda" }));
 
     expect(container.querySelectorAll(".vcard")).toHaveLength(22);
-    expect(screen.getByRole("button", { name: /Make\/model · 2/ })).toBeInTheDocument();
+    expect(getFilterButton(container, /Make\/model · 2/)).toBeInTheDocument();
   });
 
   it("removes a selected value via the active filter chip", async () => {
     const user = userEvent.setup();
     const { container } = renderInventory();
 
-    await user.click(screen.getByRole("button", { name: /Make\/model/ }));
+    await user.click(getFilterButton(container, /Make\/model/));
     const dialog = await screen.findByRole("dialog", { name: /Make\/model filter/ });
     await user.click(within(dialog).getByRole("option", { name: "Tesla" }));
     await user.keyboard("{Escape}");
@@ -85,7 +90,7 @@ describe("InventoryPage", () => {
     const { container } = renderInventory();
     const initialCount = container.querySelectorAll(".vcard").length;
 
-    await user.click(screen.getByRole("button", { name: /^Mileage/ }));
+    await user.click(getFilterButton(container, /^Mileage/));
     const dialog = await screen.findByRole("dialog", { name: /Mileage range/ });
     const maxInput = within(dialog).getByLabelText("Max") as HTMLInputElement;
 
@@ -103,12 +108,12 @@ describe("InventoryPage", () => {
     const user = userEvent.setup();
     const { container } = renderInventory();
 
-    await user.type(screen.getByLabelText("Search inventory"), "Tesla");
+    fireEvent.change(screen.getByLabelText("Search inventory"), { target: { value: "Tesla" } });
     await waitFor(() => {
       expect(container.querySelectorAll(".vcard")).toHaveLength(9);
     });
 
-    await user.click(screen.getByRole("button", { name: /Make\/model/ }));
+    await user.click(getFilterButton(container, /Make\/model/));
     const dialog = await screen.findByRole("dialog", { name: /Make\/model filter/ });
     await user.click(within(dialog).getByRole("option", { name: "Toyota" }));
     await user.keyboard("{Escape}");
